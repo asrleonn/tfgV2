@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestor de pedidos - Principal</title>
+  <link rel="stylesheet" href="../css/general.css">
+  <link rel="stylesheet" href="../css/formularioProductos.css">
+  <link rel="stylesheet" href="../css/sidebar.css">
+  <link rel="stylesheet" href="../css/search-container.css">
+  <link rel="stylesheet" href="../css/menu-desplegable.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
+  <link rel="icon" type="image/png" href="../img/favicon.png">
+
+  <!-- update the version number as needed -->
+  <script defer src="/__/firebase/10.11.1/firebase-app-compat.js"></script>
+  <!-- include only the Firebase features as you need -->
+  <script defer src="/__/firebase/10.11.1/firebase-auth-compat.js"></script>
+  <script defer src="/__/firebase/10.11.1/firebase-database-compat.js"></script>
+  <script defer src="/__/firebase/10.11.1/firebase-firestore-compat.js"></script>
+  <script defer src="/__/firebase/10.11.1/firebase-functions-compat.js"></script>
+  <script defer src="/__/firebase/10.11.1/firebase-messaging-compat.js"></script>
+  <script defer src="/__/firebase/10.11.1/firebase-storage-compat.js"></script>
+  <script defer src="/__/firebase/10.11.1/firebase-analytics-compat.js"></script>
+  <script defer src="/__/firebase/10.11.1/firebase-remote-config-compat.js"></script>
+  <script defer src="/__/firebase/10.11.1/firebase-performance-compat.js"></script>
+  <!-- 
+    initialize the SDK after all desired features are loaded, set useEmulator to false
+    to avoid connecting the SDK to running emulators.
+  -->
+  <script defer src="/__/firebase/init.js?useEmulator=false"></script>
+
+</head>
+
+<body>
+  <div class="sidebar">
+    <div class="logo-details">
+      <div class="logo_name">Opciones</div>
+      <i class='bx bx-menu' id="btn"></i>
+    </div>
+    <ul class="nav-list">
+      <li data-content="pedidos">
+        <a href="#">
+          <img src="../img/pedidos.png" class='bx bx-grid-alt imgSideBar'></img>
+          <span class="links_name">Pedidos</span>
+        </a>
+        <span class="tooltip">Pedidos</span>
+      </li>
+      <li data-content="productos">
+        <a href="#">
+          <img src="../img/producto.png" class='bx bx-grid-alt imgSideBar'></img>
+          <span class="links_name">Productos</span>
+        </a>
+        <span class="tooltip">Productos</span>
+      </li>
+      <li data-content="ofertas">
+        <a href="#">
+          <img src="../img/oferta.png" class='bx bx-grid-alt imgSideBar'></img>
+          <span class="links_name">Ofertas</span>
+        </a>
+        <span class="tooltip">Ofertas</span>
+      </li>
+      <li data-content="clientes" class="soloAdmin">
+        <a href="#">
+          <img src="../img/clientes.png" class='bx bx-grid-alt imgSideBar'></img>
+          <span class="links_name">Clientes</span>
+        </a>
+        <span class="tooltip">Clientes</span>
+      </li>
+      <li class="profile">
+        <div class="profile-details">
+          <img src="../img/dam.png" alt="profileImg">
+          <div class="name_job">
+            <div class="name">TFG</div>
+            <div class="job">2ºDAM</div>
+          </div>
+        </div>
+        <a id="cerrarSesion"><i class='bx bx-log-out' id="log_out"></i></a>
+      </li>
+    </ul>
+  </div>
+  <section class="home-section">
+    <div id="content">
+
+      <!--pedidos-->
+      <div id="pedidos" class="content-section" data-name="pedidos">
+        <div class="search-container">
+          <input type="text" placeholder="Buscar...">
+          <button>
+            <img id="lupa" src="/img/lupa.png" alt="Buscar" />
+          </button>
+        </div>
+        <div class="dropdown">
+          <button class="dropbtn">
+            Opciones de filtrado
+            <img src="/img/filtro.png" alt="Filtro">
+          </button>
+          <div class="dropdown-content">
+            <a href="#">En curso</a>
+            <a href="#">Terminados</a>
+            <a href="#">Todos</a>
+          </div>
+        </div>
+        <div class="resto-seccion">
+
+        </div>
+      </div>
+
+      <!--productos-->
+      <div id="productos" class="content-section" data-name="productos" style="display: none;">
+        <div class="search-container" id="search-container-prod">
+          <input type="text" id="txt-prod" placeholder="Buscar...">
+          <button id="btn-lupa-prod">
+            <img id="lupa" src="/img/lupa.png" alt="Buscar" />
+          </button>
+        </div>
+        <div class="dropdown" id="dropdown-prod">
+          <button class="dropbtn">
+            Opciones de filtrado
+            <img src="/img/filtro.png" alt="Filtro">
+          </button>
+          <div class="dropdown-content">
+            <a id="opc1-prod" href="#">Disponibles</a>
+            <a id="opc2-prod" href="#">No disponibles</a>
+            <a id="opc3-prod" href="#">Todos</a>
+          </div>
+        </div>
+        <div class="resto-seccion" id="resto-seccion-productos">
+        </div>
+        <button id="btMasProd" class="add-button soloAdmin">
+          <img src="/img/plus.png" alt="Agregar">
+        </button>
+      </div>
+
+      <!--ofertas-->
+      <div id="ofertas" class="content-section" data-name="ofertas" style="display: none;">
+        <div class="search-container" id="search-container-ofertas">
+          <input type="text" id="txt-of" placeholder="Buscar...">
+          <button id="btn-lupa-of">
+            <img id="lupa" src="/img/lupa.png" alt="Buscar" />
+          </button>
+        </div>
+        <div class="dropdown" id="dropdown-ofertas">
+          <button class="dropbtn">
+            Opciones de filtrado
+            <img src="/img/filtro.png" alt="Filtro">
+          </button>
+          <div class="dropdown-content">
+            <a href="#" id="opc1-of">Disponibles</a>
+            <a href="#" id="opc2-of">No disponibles</a>
+            <a href="#" id="opc3-of">Todos</a>
+          </div>
+        </div>
+        <div class="resto-seccion" id="resto-seccion-ofertas">
+
+        </div>
+        <button id="btMasOf" class="add-button soloAdmin">
+          <img src="/img/plus.png" alt="Agregar">
+        </button>
+      </div>
+
+      <!--clientes-->
+      <div id="clientes" class="content-section" data-name="clientes" style="display: none;">
+        <div class="search-container">
+          <input type="text" id="txt-cli" placeholder="Buscar...">
+          <button id="btn-lupa-cli">
+            <img src="/img/lupa.png" alt="Buscar" />
+          </button>
+        </div>
+        <div class="dropdown">
+          <button class="dropbtn">
+            Opciones de filtrado
+            <img src="/img/filtro.png" alt="Filtro">
+          </button>
+          <div class="dropdown-content">
+            <a href="#" id="opc1-cli">Activos</a>
+            <a href="#" id="opc2-cli">Bloqueados</a>
+            <a href="#" id="opc3-cli">Todos</a>
+          </div>
+        </div>
+        <div class="resto-seccion" id="lista-clientes">
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+  <!--<script src="../js/sidebar.js"></script>-->
+  <script defer type="module" src="../js/firebase-principal.js"></script>
+</body>
+
+</html>

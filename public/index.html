@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestor de pedidos - Login</title>
+  <link rel="stylesheet" href="css/login.css">
+  <link rel="icon" type="image/png" href="img/favicon.png">
+  <!-- update the version number as needed -->
+  <script defer src="/__/firebase/10.11.1/firebase-app-compat.js"></script>
+  <!-- include only the Firebase features as you need -->
+  <script defer src="/__/firebase/10.11.1/firebase-auth-compat.js"></script>
+  <script defer src="/__/firebase/10.11.1/firebase-database-compat.js"></script>
+  <script defer src="/__/firebase/10.11.1/firebase-firestore-compat.js"></script>
+  <script defer src="/__/firebase/10.11.1/firebase-functions-compat.js"></script>
+  <script defer src="/__/firebase/10.11.1/firebase-messaging-compat.js"></script>
+  <script defer src="/__/firebase/10.11.1/firebase-storage-compat.js"></script>
+  <script defer src="/__/firebase/10.11.1/firebase-analytics-compat.js"></script>
+  <script defer src="/__/firebase/10.11.1/firebase-remote-config-compat.js"></script>
+  <script defer src="/__/firebase/10.11.1/firebase-performance-compat.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+  <!-- 
+      initialize the SDK after all desired features are loaded, set useEmulator to false
+      to avoid connecting the SDK to running emulators.
+    -->
+  <script defer src="/__/firebase/init.js?useEmulator=false"></script>
+</head>
+
+<body>
+  <div class="login-container">
+    <h2>Inicio de sesión</h2>
+    <form action="#" method="POST">
+      <div class="input-group">
+        <label for="username">Email:</label>
+        <input type="text" id="username" name="username" required>
+      </div>
+      <div class="input-group">
+        <label for="password">Contraseña:</label>
+        <input type="password" id="password" name="password" required>
+      </div>
+      <button id="btnEnviar" type="submit">Enviar</button>
+    </form>
+  </div>
+  
+  <script defer type="module" src="js/login.js"></script>
+</body>
+
+</html>
