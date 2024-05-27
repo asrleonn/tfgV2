@@ -1,3 +1,0 @@
-menuId en las ofertas
-refrescar automaticamente los pedidos
-editar las ofertas y los pedidos
