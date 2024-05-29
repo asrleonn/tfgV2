@@ -280,12 +280,13 @@ function mostrarOfertas(nombreFiltro, consultaBusqueda = '') {
 }
 
 function mostrarPedidos(nombreFiltro, consultaBusqueda = '') {
+
   const pedidosRef = firebase.database().ref('Pedido');
 
   pedidosRef.once('value')
     .then((snapshot) => {
       const pedidos = snapshot.val();
-      console.log('Pedidos:', pedidos);
+      const contenedorPedidos = document.getElementById('resto-seccion-pedidos');
 
       if (pedidos) {
         Object.keys(pedidos).forEach((key) => {
@@ -308,22 +309,49 @@ function mostrarPedidos(nombreFiltro, consultaBusqueda = '') {
             Ofertas: []
           };
 
-          // Obtener descripciones de productos
-          if (pedido.Productos) {
-            const promisesProductos = pedido.Productos.map(producto => {
-              return obtenerDescripcionProducto(producto.IdProducto)
-                .then(descripcion => {
-                  pedidoObj.Productos.push(descripcion);
-                })
-                .catch(error => {
-                  console.error('Error al obtener la descripción del producto:', error);
-                });
-            });
+          // Obtener nombre del cliente
+          obtenerNombreCliente(pedido.clienteId)
+            .then(nombreCliente => {
+              pedidoObj.nombreCliente = nombreCliente;
 
-            Promise.all(promisesProductos)
-              .then(() => {
-                // Una vez que se han obtenido todas las descripciones de productos, continuar
-                // con la obtención de nombres de ofertas
+              // Obtener descripciones de productos
+              if (pedido.Productos) {
+                const promisesProductos = pedido.Productos.map(producto => {
+                  return obtenerDescripcionProducto(producto.IdProducto)
+                    .then(descripcion => {
+                      pedidoObj.Productos.push(descripcion);
+                    })
+                    .catch(error => {
+                      console.error('Error al obtener la descripción del producto:', error);
+                    });
+                });
+
+                Promise.all(promisesProductos)
+                  .then(() => {
+                    // Obtener nombres de ofertas si las hay
+                    if (pedido.Ofertas) {
+                      const promisesOfertas = pedido.Ofertas.map(oferta => {
+                        return obtenerNombreOferta(oferta.IdOferta)
+                          .then(nombre => {
+                            pedidoObj.Ofertas.push(nombre);
+                          })
+                          .catch(error => {
+                            console.error('Error al obtener el nombre de la oferta:', error);
+                          });
+                      });
+
+                      Promise.all(promisesOfertas)
+                        .then(() => {
+                          // Una vez que se han obtenido todas las descripciones de productos y nombres de ofertas, mostrar el pedido
+                          mostrarPedidoEnHTML(pedidoObj, contenedorPedidos);
+                        });
+                    } else {
+                      // Si no hay ofertas en el pedido, mostrar el pedido sin esperar a obtener nombres de ofertas
+                      mostrarPedidoEnHTML(pedidoObj, contenedorPedidos);
+                    }
+                  });
+              } else {
+                // Si no hay productos en el pedido, mostrar el pedido sin esperar a obtener descripciones de productos
                 if (pedido.Ofertas) {
                   const promisesOfertas = pedido.Ofertas.map(oferta => {
                     return obtenerNombreOferta(oferta.IdOferta)
@@ -337,38 +365,18 @@ function mostrarPedidos(nombreFiltro, consultaBusqueda = '') {
 
                   Promise.all(promisesOfertas)
                     .then(() => {
-                      // Una vez que se han obtenido todas las descripciones de productos
-                      // y nombres de ofertas, mostrar el pedido
-                      console.log('Pedido:', pedidoObj);
+                      // Una vez que se han obtenido todos los nombres de ofertas, mostrar el pedido
+                      mostrarPedidoEnHTML(pedidoObj, contenedorPedidos);
                     });
                 } else {
-                  // Si no hay ofertas en el pedido, mostrar el pedido sin esperar a obtener nombres de ofertas
-                  console.log('Pedido:', pedidoObj);
+                  // Si no hay productos ni ofertas en el pedido, mostrar el pedido sin esperar a obtener datos adicionales
+                  mostrarPedidoEnHTML(pedidoObj, contenedorPedidos);
                 }
-              });
-          } else {
-            // Si no hay productos en el pedido, mostrar el pedido sin esperar a obtener descripciones de productos
-            if (pedido.Ofertas) {
-              const promisesOfertas = pedido.Ofertas.map(oferta => {
-                return obtenerNombreOferta(oferta.IdOferta)
-                  .then(nombre => {
-                    pedidoObj.Ofertas.push(nombre);
-                  })
-                  .catch(error => {
-                    console.error('Error al obtener el nombre de la oferta:', error);
-                  });
-              });
-
-              Promise.all(promisesOfertas)
-                .then(() => {
-                  // Una vez que se han obtenido todos los nombres de ofertas, mostrar el pedido
-                  console.log('Pedido:', pedidoObj);
-                });
-            } else {
-              // Si no hay productos ni ofertas en el pedido, mostrar el pedido sin esperar a obtener datos adicionales
-              console.log('Pedido:', pedidoObj);
-            }
-          }
+              }
+            })
+            .catch(error => {
+              console.error('Error al obtener el nombre del cliente:', error);
+            });
         });
       } else {
         console.log('No hay pedidos disponibles.');
@@ -376,6 +384,109 @@ function mostrarPedidos(nombreFiltro, consultaBusqueda = '') {
     })
     .catch((error) => {
       console.error('Error al leer los pedidos:', error);
+    });
+}
+
+function mostrarPedidoEnHTML(pedido, contenedor) {
+  const pedidoDiv = document.createElement('div');
+  pedidoDiv.classList.add('cliente-div');
+  pedidoDiv.classList.add('pedido-div');
+  pedidoDiv.style.backgroundColor = '#e1e8ec'; // Color de fondo
+  pedidoDiv.style.border = '1px solid #284a66'; // Borde
+  pedidoDiv.style.borderRadius = '8px'; // Borde redondeado
+  pedidoDiv.style.boxShadow = '2px 2px 10px rgba(0, 0, 0, 0.1)'; // Sombra
+
+  const nombreClienteP = document.createElement('p');
+  nombreClienteP.innerHTML = `<b>Nombre del cliente:</b> ${pedido.nombreCliente}`;
+  pedidoDiv.appendChild(nombreClienteP);
+
+  if (pedido.Ofertas.length > 0) {
+    const ofertasP = document.createElement('p');
+    ofertasP.innerHTML = `<b>Ofertas:</b><br>${pedido.Ofertas.join('<br>')}`;
+    pedidoDiv.appendChild(ofertasP);
+  }
+
+  if (pedido.Productos.length > 0) {
+    const productosP = document.createElement('p');
+    productosP.innerHTML = `<b>Productos:</b><br>${pedido.Productos.join('<br>')}`;
+    pedidoDiv.appendChild(productosP);
+  }
+
+  const fechaP = document.createElement('p');
+  const fechaString = `${pedido.fechaHora.getDate()}/${pedido.fechaHora.getMonth() + 1}/${pedido.fechaHora.getFullYear()} ${pedido.fechaHora.getHours()}:${pedido.fechaHora.getMinutes()}`;
+  fechaP.innerHTML = `<b>Fecha:</b> ${fechaString}`;
+  pedidoDiv.appendChild(fechaP);
+
+  const importeP = document.createElement('p');
+  importeP.innerHTML = `<b>Importe:</b> ${pedido.importe}`;
+  pedidoDiv.appendChild(importeP);
+
+  const botonHecho = document.createElement('button');
+  botonHecho.classList.add('boton-hecho');
+  botonHecho.textContent = 'Hecho';
+  pedidoDiv.appendChild(botonHecho);
+
+  // Estilo para el botón "Hecho"
+  botonHecho.style.position = 'absolute';
+  botonHecho.style.right = '20px';
+  botonHecho.style.top = '50%';
+  botonHecho.style.transform = 'translateY(-50%)';
+
+  contenedor.appendChild(pedidoDiv);
+}
+
+
+/*function mostrarPedidoEnHTML(pedido, contenedor) {
+  const pedidoDiv = document.createElement('div');
+  pedidoDiv.classList.add('cliente-div');
+  pedidoDiv.classList.add('pedido-div');
+
+  const nombreClienteP = document.createElement('p');
+  nombreClienteP.innerHTML = `<b>Nombre del cliente:</b> ${pedido.nombreCliente}`;
+  pedidoDiv.appendChild(nombreClienteP);
+
+  if (pedido.Ofertas.length > 0) {
+    const ofertasP = document.createElement('p');
+    ofertasP.innerHTML = `<b>Ofertas:</b><br>${pedido.Ofertas.join('<br>')}`;
+    pedidoDiv.appendChild(ofertasP);
+  }
+
+  if (pedido.Productos.length > 0) {
+    const productosP = document.createElement('p');
+    productosP.innerHTML = `<b>Productos:</b><br>${pedido.Productos.join('<br>')}`;
+    pedidoDiv.appendChild(productosP);
+  }
+
+  const fechaP = document.createElement('p');
+  const fechaString = `${pedido.fechaHora.getDate()}/${pedido.fechaHora.getMonth() + 1}/${pedido.fechaHora.getFullYear()} ${pedido.fechaHora.getHours()}:${pedido.fechaHora.getMinutes()}`;
+  fechaP.innerHTML = `<b>Fecha:</b> ${fechaString}`;
+  pedidoDiv.appendChild(fechaP);
+
+  const importeP = document.createElement('p');
+  importeP.innerHTML = `<b>Importe:</b> ${pedido.importe}`;
+  pedidoDiv.appendChild(importeP);
+
+  const botonHecho = document.createElement('button');
+  botonHecho.classList.add('boton-hecho');
+  botonHecho.textContent = 'Hecho';
+  pedidoDiv.appendChild(botonHecho);
+
+  contenedor.appendChild(pedidoDiv);
+}*/
+
+function obtenerNombreCliente(idCliente) {
+  return firebase.database().ref('Cliente/' + idCliente).once('value')
+    .then((snapshot) => {
+      const cliente = snapshot.val();
+      if (cliente) {
+        return cliente.Nombre;
+      } else {
+        return 'Nombre no encontrado';
+      }
+    })
+    .catch((error) => {
+      console.error('Error al obtener el nombre del cliente:', error);
+      return 'Error al obtener el nombre del cliente';
     });
 }
 
