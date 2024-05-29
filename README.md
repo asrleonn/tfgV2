@@ -10,4 +10,4 @@
 - Formulario crear ofertas
 
 ## Hablar:  
-- QUién quita el stock, el de la tienda al confirmar el pedido no?
+- QUién quita el stock, el de la tienda al confirmar el pedido o la app al hacer el pedido?

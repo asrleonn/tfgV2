@@ -73,6 +73,11 @@
           "IdProducto": 2
         }
       ],
+      "Ofertas": [
+        {
+          "IdOferta": 0
+        }
+      ],
       "clienteId": 1,
       "entregado": true,
       "fechaHora": {
