@@ -5,6 +5,7 @@
   - Crear pedidos
   - Refrescarlos automáticamente
 - Edición de productos
+- Cancelar la creación de un nuevo pedido
  
 ## Revisar:  
 - Formulario crear ofertas
