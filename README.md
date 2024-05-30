@@ -6,6 +6,7 @@
   - Refrescarlos automáticamente
 - Edición de productos
 - Cancelar la creación de un nuevo pedido
+  - al hacer click en la sección
  
 ## Revisar:  
 - Formulario crear ofertas
