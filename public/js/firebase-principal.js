@@ -607,16 +607,19 @@ function setUpAnadirProd() {
     var btnEnviar = document.createElement('button');
     btnEnviar.type = 'submit';
     btnEnviar.textContent = 'Enviar';
+    btnEnviar.classList.add('btnEnviar');
 
     var btnCancelar = document.createElement('button');
     btnCancelar.type = 'button'; // Evitar que el botón envíe el formulario
     btnCancelar.textContent = 'Cancelar';
+    btnCancelar.classList.add('btnCancelar');
     btnCancelar.addEventListener('click', function() {
       restoSeccion.innerHTML = '';
       barraBusqueda.style.display = '';
       menuDesplegable.style.display = '';
       boton.style.display = '';
       mostrarProductos('todos');
+      return
     });
 
     form.appendChild(btnEnviar);
@@ -650,80 +653,6 @@ function setUpAnadirProd() {
 
   };
 }
-
-
-/*function setUpAnadirProd() {
-  var boton = document.getElementById('btMasProd');
-  boton.onclick = function () {
-
-    var restoSeccion = document.getElementById('resto-seccion-productos');
-    restoSeccion.innerHTML = '';
-
-    var barraBusqueda = document.getElementById('search-container-prod');
-    var menuDesplegable = document.getElementById('dropdown-prod');
-    barraBusqueda.style.display = 'none';
-    menuDesplegable.style.display = 'none';
-    boton.style.display = 'none';
-
-    var modalContainer = document.createElement('div');
-    modalContainer.className = 'modal-container';
-
-    var form = document.createElement('form');
-    form.id = 'modal-form';
-
-    var campos = [
-      { label: 'Descripción', name: 'descripcion', type: 'text' },
-      { label: 'ID del Producto', name: 'idProducto', type: 'text' },
-      { label: 'Ingredientes', name: 'ingredientes', type: 'text' },
-      { label: 'Precio', name: 'precio', type: 'number' },
-      { label: 'URL de la Imagen', name: 'urlimagen', type: 'url' },
-      { label: 'Stock', name: 'stock', type: 'number' },
-      { label: 'Tipo', name: 'tipo', type: 'text' }
-    ];
-
-    campos.forEach(function (campo) {
-      var label = document.createElement('label');
-      label.textContent = campo.label;
-
-      var input = document.createElement('input');
-      input.type = campo.type;
-      input.name = campo.name;
-      input.required = true;
-
-      form.appendChild(label);
-      form.appendChild(input);
-    });
-
-    var btnEnviar = document.createElement('button');
-    btnEnviar.type = 'submit';
-    btnEnviar.textContent = 'Enviar';
-
-    form.appendChild(btnEnviar);
-    restoSeccion.appendChild(form);
-
-    form.addEventListener('submit', function (event) {
-      event.preventDefault();
-
-      var producto = {
-        descripcion: form.descripcion.value,
-        idProducto: form.idProducto.value,
-        ingredientes: form.ingredientes.value,
-        precio: parseFloat(form.precio.value),
-        urlimagen: form.urlimagen.value,
-        stock: parseInt(form.stock.value),
-        tipo: form.tipo.value
-      };
-      guardarProductoBBDD(producto);
-
-      restoSeccion.innerHTML = '';
-
-      mostrarBarraBusquedaProd();
-
-      mostrarProductos('todos');
-    });
-
-  };
-}*/
 
 function mostrarBarraBusquedaProd() {
   var barraBusqueda = document.getElementById('search-container-prod');
@@ -781,8 +710,22 @@ function setUpAnadirOferta() {
     const btnEnviar = document.createElement('button');
     btnEnviar.type = 'submit';
     btnEnviar.textContent = 'Enviar';
+    btnEnviar.classList.add('btnEnviar');
+
+    const btnCancelar = document.createElement('button');
+    btnCancelar.type = 'button';
+    btnCancelar.textContent = 'Cancelar';
+    btnCancelar.classList.add('btnCancelar');
+    btnCancelar.addEventListener('click', function() {
+      barraBusqueda.style.display = '';
+      dropdown.style.display = '';
+      restoSeccion.innerHTML = '';
+      mostrarBarraBusquedaOferta();
+      return 
+    });
 
     form.appendChild(btnEnviar);
+    form.appendChild(btnCancelar);
     modalContainer.appendChild(form);
 
     form.addEventListener('submit', function (event) {
@@ -804,7 +747,6 @@ function setUpAnadirOferta() {
 
       restoSeccion.innerHTML = '';
       mostrarBarraBusquedaOferta();
-
     });
 
     restoSeccion.appendChild(modalContainer);

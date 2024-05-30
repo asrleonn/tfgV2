@@ -8,6 +8,9 @@
 - que las ofertas no disponibles salgan en rojo
 - revisar qué campso mostrar en ofertas (mostrar tb los menus)
 - lo de los ids
+- campos vacíos en los formularios
+- boton borrar cuando el de añadir esté pulsado
+- botones de uiverse.io
  
 ## Revisar:  
 - Formulario crear ofertas
