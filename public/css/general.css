@@ -107,7 +107,7 @@
 }
 
 .add-button {
-  display: '';
+  /*display: '';*/
   position: fixed;
   bottom: 20px;
   right: 20px;
@@ -125,12 +125,12 @@
 }
 
 .add-button:hover {
-  display: '';
+  /*display: '';*/
   box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2);
 }
 
 .add-button img {
-  display: '';
+  /*display: '';*/
   width: 30px;
   height: 30px;
 }
