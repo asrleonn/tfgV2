@@ -1,3 +1,4 @@
+/*COMPROBACIÓN INICIO DE SESIÓN*/
 document.addEventListener('DOMContentLoaded', function () {
 
   var currentUser = JSON.parse(localStorage.getItem('currentUser'));
@@ -29,6 +30,7 @@ document.addEventListener('DOMContentLoaded', function () {
   };
 });
 
+/*MOSTRAR U OCULTAR SEGÚN PERMISOS*/
 function mostrarTodo(booleanArg) {
   var elements = document.getElementsByClassName('soloAdmin');
   for (var i = 0; i < elements.length; i++) {
@@ -40,6 +42,67 @@ function mostrarTodo(booleanArg) {
   }
 }
 
+/*SIDEBAR*/
+document.addEventListener('DOMContentLoaded', () => {
+  const sidebarItems = document.querySelectorAll('.nav-list li[data-content]');
+  const contentSections = document.querySelectorAll('.content-section');
+  let sidebar = document.querySelector(".sidebar");
+  let closeBtn = document.querySelector("#btn");
+
+  sidebarItems.forEach(item => {
+    item.addEventListener('click', () => {
+      const contentToShow = item.getAttribute('data-content');
+
+      if (sidebar.classList.contains("open")) {
+        sidebar.classList.remove("open");
+        menuBtnChange();
+      }
+
+      contentSections.forEach(section => {
+        section.style.display = 'none';
+      });
+
+      document.getElementById(contentToShow).style.display = 'block';
+      var nombreSeccion = document.getElementById(contentToShow).getAttribute('data-name');
+      switch (nombreSeccion) {
+        case 'pedidos':
+          mostrarPedidos('todos');
+          break;
+        case 'productos':
+          mostrarBarraBusquedaProd();
+          mostrarProductos('todos');
+          setUpBarraBusqueda('productos');
+          setUpAnadirProd();
+          break;
+        case 'ofertas':
+          mostrarBarraBusquedaOferta(); //-> llama a mostrarOfertas('todos')
+          //mostrarOfertas('todos');
+          setUpBarraBusqueda('ofertas');
+          setUpAnadirOferta();
+          break;
+        case 'clientes':
+          mostrarClientes('todos');
+          setUpBarraBusqueda('clientes');
+          break;
+      }
+    });
+  });
+
+  closeBtn.addEventListener("click", () => {
+    sidebar.classList.toggle("open");
+    menuBtnChange();
+  });
+
+  function menuBtnChange() {
+    if (sidebar.classList.contains("open")) {
+      closeBtn.classList.replace("bx-menu", "bx-menu-alt-right");
+    } else {
+      closeBtn.classList.replace("bx-menu-alt-right", "bx-menu");
+    }
+  }
+});
+
+/*FUNCIONES MOSTRAR*/
 function mostrarProductos(nombreFiltro, consultaBusqueda = '') {
 
   const productosRef = firebase.database().ref('Producto');
@@ -123,66 +186,6 @@ function mostrarProductos(nombreFiltro, consultaBusqueda = '') {
     });
 }
 
-/*SIDEBAR*/
-document.addEventListener('DOMContentLoaded', () => {
-  const sidebarItems = document.querySelectorAll('.nav-list li[data-content]');
-  const contentSections = document.querySelectorAll('.content-section');
-  let sidebar = document.querySelector(".sidebar");
-  let closeBtn = document.querySelector("#btn");
-
-  sidebarItems.forEach(item => {
-    item.addEventListener('click', () => {
-      const contentToShow = item.getAttribute('data-content');
-
-      if (sidebar.classList.contains("open")) {
-        sidebar.classList.remove("open");
-        menuBtnChange();
-      }
-
-      contentSections.forEach(section => {
-        section.style.display = 'none';
-      });
-
-      document.getElementById(contentToShow).style.display = 'block';
-      var nombreSeccion = document.getElementById(contentToShow).getAttribute('data-name');
-      switch (nombreSeccion) {
-        case 'pedidos':
-          mostrarPedidos('todos');
-          break;
-        case 'productos':
-          mostrarBarraBusquedaProd();
-          mostrarProductos('todos');
-          setUpBarraBusqueda('productos');
-          setUpAnadirProd();
-          break;
-        case 'ofertas':
-          mostrarBarraBusquedaOferta(); //-> llama a mostrarOfertas('todos')
-          //mostrarOfertas('todos');
-          setUpBarraBusqueda('ofertas');
-          setUpAnadirOferta();
-          break;
-        case 'clientes':
-          mostrarClientes('todos');
-          setUpBarraBusqueda('clientes');
-          break;
-      }
-    });
-  });
-
-  closeBtn.addEventListener("click", () => {
-    sidebar.classList.toggle("open");
-    menuBtnChange();
-  });
-
-  function menuBtnChange() {
-    if (sidebar.classList.contains("open")) {
-      closeBtn.classList.replace("bx-menu", "bx-menu-alt-right");
-    } else {
-      closeBtn.classList.replace("bx-menu-alt-right", "bx-menu");
-    }
-  }
-});
-
 function mostrarOfertas(nombreFiltro, consultaBusqueda = '') {
   const ofertasRef = firebase.database().ref('Oferta');
   const productosRef = firebase.database().ref('Producto');
@@ -243,22 +246,6 @@ function mostrarOfertas(nombreFiltro, consultaBusqueda = '') {
     .catch((error) => {
       console.error('Error al leer las ofertas:', error);
     });
-}
-
-function shouldAddOffer(oferta, nombreFiltro, consultaBusqueda) {
-  if (consultaBusqueda) {
-    return oferta.Nombre.toLowerCase().trim().includes(consultaBusqueda.toLowerCase().trim());
-  }
-
-  switch (nombreFiltro) {
-    case 'disponibles':
-      return oferta.Activada;
-    case 'noDisponibles':
-      return !oferta.Activada;
-    case 'todos':
-    default:
-      return true;
-  }
 }
 
 function mostrarPedidos(nombreFiltro, consultaBusqueda = '') {
@@ -430,138 +417,75 @@ function mostrarPedidoEnHTML(pedido, contenedor) {
   contenedor.appendChild(pedidoDiv);
 }
 
-function obtenerNombreCliente(idCliente) {
-  return firebase.database().ref('Cliente/' + idCliente).once('value')
-    .then((snapshot) => {
-      const cliente = snapshot.val();
-      if (cliente) {
-        return cliente.Nombre;
+function mostrarClientes(nombreFiltro, consultaBusqueda = '') {
+  var listaClientes = document.getElementById('lista-clientes');
+
+  listaClientes.innerHTML = '';
+
+  firebase.database().ref('Cliente').once('value', function (snapshot) {
+    snapshot.forEach(function (childSnapshot) {
+      var cliente = childSnapshot.val();
+
+      var clienteDiv = document.createElement('div');
+      clienteDiv.className = 'cliente-div';
+
+      var contenidoCliente = '<h3>' + cliente.Nombre + '</h3>' +
+        '<p>Correo: ' + cliente.Correo + '</p>' +
+        '<p>Teléfono: ' + cliente.Telefono + '</p>' +
+        '<p>Puntos: ' + cliente.Puntos + '</p>';
+
+      var botonBanear = document.createElement('button');
+      botonBanear.className = 'boton-banear';
+
+      if (cliente.Bloqueado) {
+        botonBanear.textContent = 'Restablecer';
+        botonBanear.style.backgroundColor = '#00cc00'; // Verde
       } else {
-        return 'Nombre no encontrado';
+        botonBanear.textContent = 'Banear';
+        botonBanear.style.backgroundColor = '#ff3333'; // Rojo
       }
-    })
-    .catch((error) => {
-      console.error('Error al obtener el nombre del cliente:', error);
-      return 'Error al obtener el nombre del cliente';
+
+      botonBanear.onclick = function () {
+        gestionarClientes(cliente.Correo);
+      };
+
+      clienteDiv.innerHTML = contenidoCliente;
+      clienteDiv.appendChild(botonBanear);
+
+
+      var anadirProd = false;
+
+      if (consultaBusqueda == '') {
+        switch (nombreFiltro) {
+          case 'todos':
+            anadirProd = true;
+            break;
+          case 'activos':
+            if (!cliente.Bloqueado) {
+              anadirProd = true;
+            }
+            break;
+          case 'bloqueados':
+            if (cliente.Bloqueado == true) {
+              anadirProd = true;
+            }
+            break;
+        }
+
+      } else {
+        if (cliente.Nombre.toLowerCase().trim().includes(consultaBusqueda.toLowerCase().trim())) {
+          anadirProd = true;
+        }
+      }
+
+      if (anadirProd) {
+        listaClientes.appendChild(clienteDiv);
+      }
     });
-}
-
-function obtenerDescripcionProducto(productoId) {
-  const productosRef = firebase.database().ref('Producto');
-
-  return new Promise((resolve, reject) => {
-    productosRef.child(productoId).once('value')
-      .then((snapshot) => {
-        const productoData = snapshot.val();
-        if (productoData && productoData.Descripcion) {
-          resolve(productoData.Descripcion);
-        } else {
-          reject(new Error('No se encontró la descripción del producto'));
-        }
-      })
-      .catch((error) => {
-        reject(error);
-      });
   });
 }
 
-function obtenerNombreOferta(ofertaId) {
-  const ofertasRef = firebase.database().ref('Oferta');
-
-  return new Promise((resolve, reject) => {
-    ofertasRef.child(ofertaId).once('value')
-      .then((snapshot) => {
-        const ofertaData = snapshot.val();
-        if (ofertaData && ofertaData.Nombre) {
-          resolve(ofertaData.Nombre);
-        } else {
-          reject(new Error('No se encontró el nombre de la oferta'));
-        }
-      })
-      .catch((error) => {
-        reject(error);
-      });
-  });
-}
-
-function setUpBarraBusqueda(seccion) {
-  switch (seccion) {
-    case 'pedidos':
-    /**/
-    case 'productos':
-      var caja = document.getElementById('txt-prod');
-      var lupa = document.getElementById('btn-lupa-prod');
-      var disponibles = document.getElementById('opc1-prod');
-      var noDisponibles = document.getElementById('opc2-prod');
-      var todos = document.getElementById('opc3-prod');
-
-      lupa.onclick = function () {
-        mostrarProductos('todos', caja.value);
-      };
-
-      disponibles.onclick = function () {
-        mostrarProductos('Disponibles');
-      };
-
-      noDisponibles.onclick = function () {
-        mostrarProductos('No disponibles');
-      };
-
-      todos.onclick = function () {
-        mostrarProductos('todos');
-      };
-      break;
-    case 'clientes':
-      var caja = document.getElementById('txt-cli');
-      var lupa = document.getElementById('btn-lupa-cli');
-      var activos = document.getElementById('opc1-cli');
-      var bloqueados = document.getElementById('opc2-cli');
-      var todos = document.getElementById('opc3-cli');
-
-      lupa.onclick = function () {
-        mostrarClientes('todos', caja.value);
-      };
-
-      todos.onclick = function () {
-        mostrarClientes('todos');
-      };
-
-      activos.onclick = function () {
-        mostrarClientes('activos');
-      };
-
-      bloqueados.onclick = function () {
-        mostrarClientes('bloqueados');
-      };
-
-      break;
-    case 'ofertas':
-      var caja = document.getElementById('txt-of');
-      var lupa = document.getElementById('btn-lupa-of');
-      var disponibles = document.getElementById('opc1-of');
-      var noDisponibles = document.getElementById('opc2-of');
-      var todos = document.getElementById('opc3-of');
-
-      lupa.onclick = function () {
-        mostrarOfertas('todos', caja.value);
-      };
-
-      disponibles.onclick = function () {
-        mostrarOfertas('disponibles');
-      };
-
-      noDisponibles.onclick = function () {
-        mostrarOfertas('noDisponibles');
-      };
-
-      todos.onclick = function () {
-        mostrarOfertas('todos');
-      };
-
-      break;
-  }
-}
-
+/*AÑADIR*/
 function setUpAnadirProd() {
   var boton = document.getElementById('btMasProd');
   boton.onclick = function () {
@@ -654,16 +578,6 @@ function setUpAnadirProd() {
   };
 }
 
-function mostrarBarraBusquedaProd() {
-  var barraBusqueda = document.getElementById('search-container-prod');
-  var menuDesplegable = document.getElementById('dropdown-prod');
-  var boton = document.getElementById('btMasProd');
-
-  barraBusqueda.style.display = '';
-  menuDesplegable.style.display = '';
-  boton.style.display = '';
-}
-
 function setUpAnadirOferta() {
   var btn = document.getElementById('btMasOf');
   btn.onclick = function () {
@@ -753,6 +667,166 @@ function setUpAnadirOferta() {
   };
 }
 
+function shouldAddOffer(oferta, nombreFiltro, consultaBusqueda) {
+  if (consultaBusqueda) {
+    return oferta.Nombre.toLowerCase().trim().includes(consultaBusqueda.toLowerCase().trim());
+  }
+
+  switch (nombreFiltro) {
+    case 'disponibles':
+      return oferta.Activada;
+    case 'noDisponibles':
+      return !oferta.Activada;
+    case 'todos':
+    default:
+      return true;
+  }
+}
+
+/*OBTENCIÓN DE DATOS*/
+function obtenerNombreCliente(idCliente) {
+  return firebase.database().ref('Cliente/' + idCliente).once('value')
+    .then((snapshot) => {
+      const cliente = snapshot.val();
+      if (cliente) {
+        return cliente.Nombre;
+      } else {
+        return 'Nombre no encontrado';
+      }
+    })
+    .catch((error) => {
+      console.error('Error al obtener el nombre del cliente:', error);
+      return 'Error al obtener el nombre del cliente';
+    });
+}
+
+function obtenerDescripcionProducto(productoId) {
+  const productosRef = firebase.database().ref('Producto');
+
+  return new Promise((resolve, reject) => {
+    productosRef.child(productoId).once('value')
+      .then((snapshot) => {
+        const productoData = snapshot.val();
+        if (productoData && productoData.Descripcion) {
+          resolve(productoData.Descripcion);
+        } else {
+          reject(new Error('No se encontró la descripción del producto'));
+        }
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
+}
+
+function obtenerNombreOferta(ofertaId) {
+  const ofertasRef = firebase.database().ref('Oferta');
+
+  return new Promise((resolve, reject) => {
+    ofertasRef.child(ofertaId).once('value')
+      .then((snapshot) => {
+        const ofertaData = snapshot.val();
+        if (ofertaData && ofertaData.Nombre) {
+          resolve(ofertaData.Nombre);
+        } else {
+          reject(new Error('No se encontró el nombre de la oferta'));
+        }
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
+}
+
+/*BARRAS DE BÚSQUEDA*/
+function setUpBarraBusqueda(seccion) {
+  switch (seccion) {
+    case 'pedidos':
+    /**/
+    case 'productos':
+      var caja = document.getElementById('txt-prod');
+      var lupa = document.getElementById('btn-lupa-prod');
+      var disponibles = document.getElementById('opc1-prod');
+      var noDisponibles = document.getElementById('opc2-prod');
+      var todos = document.getElementById('opc3-prod');
+
+      lupa.onclick = function () {
+        mostrarProductos('todos', caja.value);
+      };
+
+      disponibles.onclick = function () {
+        mostrarProductos('Disponibles');
+      };
+
+      noDisponibles.onclick = function () {
+        mostrarProductos('No disponibles');
+      };
+
+      todos.onclick = function () {
+        mostrarProductos('todos');
+      };
+      break;
+    case 'clientes':
+      var caja = document.getElementById('txt-cli');
+      var lupa = document.getElementById('btn-lupa-cli');
+      var activos = document.getElementById('opc1-cli');
+      var bloqueados = document.getElementById('opc2-cli');
+      var todos = document.getElementById('opc3-cli');
+
+      lupa.onclick = function () {
+        mostrarClientes('todos', caja.value);
+      };
+
+      todos.onclick = function () {
+        mostrarClientes('todos');
+      };
+
+      activos.onclick = function () {
+        mostrarClientes('activos');
+      };
+
+      bloqueados.onclick = function () {
+        mostrarClientes('bloqueados');
+      };
+
+      break;
+    case 'ofertas':
+      var caja = document.getElementById('txt-of');
+      var lupa = document.getElementById('btn-lupa-of');
+      var disponibles = document.getElementById('opc1-of');
+      var noDisponibles = document.getElementById('opc2-of');
+      var todos = document.getElementById('opc3-of');
+
+      lupa.onclick = function () {
+        mostrarOfertas('todos', caja.value);
+      };
+
+      disponibles.onclick = function () {
+        mostrarOfertas('disponibles');
+      };
+
+      noDisponibles.onclick = function () {
+        mostrarOfertas('noDisponibles');
+      };
+
+      todos.onclick = function () {
+        mostrarOfertas('todos');
+      };
+
+      break;
+  }
+}
+
+function mostrarBarraBusquedaProd() {
+  var barraBusqueda = document.getElementById('search-container-prod');
+  var menuDesplegable = document.getElementById('dropdown-prod');
+  var boton = document.getElementById('btMasProd');
+
+  barraBusqueda.style.display = '';
+  menuDesplegable.style.display = '';
+  boton.style.display = '';
+}
+
 function mostrarBarraBusquedaOferta() {
   var btn = document.getElementById('btMasOf');
   var barraBusqueda = document.getElementById('search-container-ofertas');
@@ -765,6 +839,7 @@ function mostrarBarraBusquedaOferta() {
   mostrarOfertas('todos');
 }
 
+/*BBDD*/
 function guardarOfertaBBDD(oferta) {
 
   const dbRef = firebase.database().ref('Oferta');
@@ -811,74 +886,7 @@ function guardarProductoBBDD(producto) {
   });
 }
 
-function mostrarClientes(nombreFiltro, consultaBusqueda = '') {
-  var listaClientes = document.getElementById('lista-clientes');
-
-  listaClientes.innerHTML = '';
-
-  firebase.database().ref('Cliente').once('value', function (snapshot) {
-    snapshot.forEach(function (childSnapshot) {
-      var cliente = childSnapshot.val();
-
-      var clienteDiv = document.createElement('div');
-      clienteDiv.className = 'cliente-div';
-
-      var contenidoCliente = '<h3>' + cliente.Nombre + '</h3>' +
-        '<p>Correo: ' + cliente.Correo + '</p>' +
-        '<p>Teléfono: ' + cliente.Telefono + '</p>' +
-        '<p>Puntos: ' + cliente.Puntos + '</p>';
-
-      var botonBanear = document.createElement('button');
-      botonBanear.className = 'boton-banear';
-
-      if (cliente.Bloqueado) {
-        botonBanear.textContent = 'Restablecer';
-        botonBanear.style.backgroundColor = '#00cc00'; // Verde
-      } else {
-        botonBanear.textContent = 'Banear';
-        botonBanear.style.backgroundColor = '#ff3333'; // Rojo
-      }
-
-      botonBanear.onclick = function () {
-        gestionarClientes(cliente.Correo);
-      };
-
-      clienteDiv.innerHTML = contenidoCliente;
-      clienteDiv.appendChild(botonBanear);
-
-
-      var anadirProd = false;
-
-      if (consultaBusqueda == '') {
-        switch (nombreFiltro) {
-          case 'todos':
-            anadirProd = true;
-            break;
-          case 'activos':
-            if (!cliente.Bloqueado) {
-              anadirProd = true;
-            }
-            break;
-          case 'bloqueados':
-            if (cliente.Bloqueado == true) {
-              anadirProd = true;
-            }
-            break;
-        }
-
-      } else {
-        if (cliente.Nombre.toLowerCase().trim().includes(consultaBusqueda.toLowerCase().trim())) {
-          anadirProd = true;
-        }
-      }
-
-      if (anadirProd) {
-        listaClientes.appendChild(clienteDiv);
-      }
-    });
-  });
-}
-
+/*OTROS*/
 function gestionarClientes(correoCliente) {
   var database = firebase.database();
 
