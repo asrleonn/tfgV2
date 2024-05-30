@@ -11,6 +11,8 @@ document.addEventListener('DOMContentLoaded', function () {
       mostrarTodo(false);
     }
 
+    mostrarPedidos('todos');
+
   } else {
     console.log('No hay usuario almacenado.');
     window.location.href = '../index.html';
@@ -26,7 +28,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   };
 });
-
 
 function mostrarTodo(booleanArg) {
   var elements = document.getElementsByClassName('soloAdmin');
@@ -155,8 +156,8 @@ document.addEventListener('DOMContentLoaded', () => {
           setUpAnadirProd();
           break;
         case 'ofertas':
-          mostrarBarraBusquedaOferta();
-          mostrarOfertas('todos');
+          mostrarBarraBusquedaOferta(); //-> llama a mostrarOfertas('todos')
+          //mostrarOfertas('todos');
           setUpBarraBusqueda('ofertas');
           setUpAnadirOferta();
           break;
@@ -186,31 +187,30 @@ function mostrarOfertas(nombreFiltro, consultaBusqueda = '') {
   const ofertasRef = firebase.database().ref('Oferta');
   const productosRef = firebase.database().ref('Producto');
 
-  const ofertasArray = [];
+  const contenedor = document.getElementById('resto-seccion-ofertas');
+  contenedor.innerHTML = '';
 
   ofertasRef.once('value')
     .then((snapshot) => {
       const ofertas = snapshot.val();
       console.log('Ofertas:', ofertas);
 
-      if (ofertas) {
-        Object.keys(ofertas).forEach((key) => {
-          const oferta = ofertas[key];
-          const ofertaObj = {
-            Activada: oferta.Activada,
-            Descuento: oferta.Descuento,
-            IdOferta: oferta.IdOferta,
-            Nombre: oferta.Nombre,
-            ProductosId: oferta.ProductosId,
-            RutaImagenOferta: oferta.RutaImagenOferta
-          };
-          ofertasArray.push(ofertaObj);
-        });
+      if (!ofertas) {
+        console.log('No hay ofertas disponibles.');
+        return;
+      }
 
-        const contenedor = document.getElementById('resto-seccion-ofertas');
-        contenedor.innerHTML = '';
+      const ofertasArray = Object.keys(ofertas).map(key => ({
+        ...ofertas[key],
+        key
+      }));
+
+      return productosRef.once('value').then(productSnapshot => {
+        const productos = productSnapshot.val();
 
         ofertasArray.forEach(oferta => {
+          if (!shouldAddOffer(oferta, nombreFiltro, consultaBusqueda)) return;
+
           const ofertaDiv = document.createElement('div');
           ofertaDiv.classList.add('oferta', 'cardboard');
 
@@ -223,62 +223,42 @@ function mostrarOfertas(nombreFiltro, consultaBusqueda = '') {
           nombre.textContent = oferta.Nombre;
           ofertaDiv.appendChild(nombre);
 
-          const productosId = oferta.ProductosId;
-          productosId.forEach(productoId => {
-            productosRef.child(productoId).once('value')
-              .then((snapshot) => {
-                const producto = snapshot.val();
-                if (producto) {
-                  const productosEl = document.createElement('p');
-                  productosEl.textContent = `Producto: ${producto.Descripcion}`;
-                  ofertaDiv.appendChild(productosEl);
-                }
-              })
-              .catch((error) => {
-                console.error('Error al leer el producto:', error);
-              });
+          oferta.ProductosId.forEach(productoId => {
+            const producto = productos[productoId];
+            if (producto) {
+              const productosEl = document.createElement('p');
+              productosEl.textContent = `Producto: ${producto.Descripcion}`;
+              ofertaDiv.appendChild(productosEl);
+            }
           });
 
           const descuento = document.createElement('p');
           descuento.textContent = `Descuento: ${oferta.Descuento * 100}%`;
           ofertaDiv.appendChild(descuento);
 
-          var anadirOferta = false;
-
-          if (consultaBusqueda == '') {
-            switch (nombreFiltro) {
-              case 'disponibles':
-                if (oferta.Activada) {
-                  anadirOferta = true;
-                }
-                break;
-              case 'noDisponibles':
-                if (!oferta.Activada) {
-                  anadirOferta = true;
-                }
-                break;
-              case 'todos':
-                anadirOferta = true;
-                break;
-            }
-          } else {
-            if (oferta.Nombre.toLowerCase().trim().includes(consultaBusqueda.toLowerCase().trim())) {
-              anadirOferta = true;
-            }
-          }
-
-          if (anadirOferta) {
-            contenedor.appendChild(ofertaDiv);
-          }
+          contenedor.appendChild(ofertaDiv);
         });
-
-      } else {
-        console.log('No hay ofertas disponibles.');
-      }
+      });
     })
     .catch((error) => {
       console.error('Error al leer las ofertas:', error);
     });
+}
+
+function shouldAddOffer(oferta, nombreFiltro, consultaBusqueda) {
+  if (consultaBusqueda) {
+    return oferta.Nombre.toLowerCase().trim().includes(consultaBusqueda.toLowerCase().trim());
+  }
+
+  switch (nombreFiltro) {
+    case 'disponibles':
+      return oferta.Activada;
+    case 'noDisponibles':
+      return !oferta.Activada;
+    case 'todos':
+    default:
+      return true;
+  }
 }
 
 function mostrarPedidos(nombreFiltro, consultaBusqueda = '') {
@@ -753,6 +733,8 @@ function mostrarBarraBusquedaOferta() {
   btn.style.display = '';
   dropdown.style.display = '';
   barraBusqueda.style.display = '';
+
+  mostrarOfertas('todos');
 }
 
 function guardarOfertaBBDD(oferta) {
