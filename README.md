@@ -7,6 +7,7 @@
 - Cancelar la creación de un nuevo pedido
 - que las ofertas no disponibles salgan en rojo
 - revisar qué campso mostrar en ofertas (mostrar tb los menus)
+- lo de los ids
  
 ## Revisar:  
 - Formulario crear ofertas
