@@ -7,6 +7,7 @@
 - que las ofertas no disponibles salgan en rojo
 - revisar qué campso mostrar en ofertas (mostrar tb los menus)
 - lo de los ids
+  - poner atributo id en producto
 - campos vacíos en los formularios
 - boton borrar cuando el de añadir esté pulsado
 - pantalla de edición
