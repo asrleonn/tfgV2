@@ -4,8 +4,7 @@
   - Crear pedidos
   - Refrescarlos automáticamente
 - Edición de productos
-- que las ofertas no disponibles salgan en rojo
-- revisar qué campso mostrar en ofertas (mostrar tb los menus)
+- revisar qué campso mostrar en ofertas
 - lo de los ids
   - poner atributo id en producto
 - campos vacíos en los formularios
