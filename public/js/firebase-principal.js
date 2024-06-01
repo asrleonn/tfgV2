@@ -248,88 +248,6 @@ function mostrarOfertas(nombreFiltro, consultaBusqueda = '') {
     });
 }
 
-/*
-function mostrarPedidos(nombreFiltro, consultaBusqueda = '') {
-  const pedidosRef = firebase.database().ref('Pedido');
-
-  pedidosRef.once('value')
-    .then((snapshot) => {
-      const pedidos = snapshot.val();
-      const contenedorPedidos = document.getElementById('resto-seccion-pedidos');
-      contenedorPedidos.innerHTML = '';
-
-      if (pedidos) {
-        Object.keys(pedidos).forEach((key) => {
-          const pedido = pedidos[key];
-
-          // Verificar la existencia de fechaHora y sus propiedades
-          const fechaHora = pedido.fechaHora ? new Date(
-            pedido.fechaHora.year,
-            pedido.fechaHora.monthValue - 1,
-            pedido.fechaHora.dayOfMonth,
-            pedido.fechaHora.hour,
-            pedido.fechaHora.minute,
-            pedido.fechaHora.second,
-            pedido.fechaHora.nano / 1000000
-          ) : new Date(); // Valor predeterminado si no existe fechaHora
-
-          const pedidoObj = {
-            idPedido: key, // Aquí se obtiene el ID del pedido
-            clienteId: pedido.clienteId || '',
-            entregado: pedido.entregado || false,
-            fechaHora: fechaHora,
-            importe: pedido.importe || 0,
-            Productos: [],
-            Ofertas: [],
-            menus: pedido.menus || []
-          };
-
-          // Obtener nombre del cliente
-          obtenerNombreCliente(pedido.clienteId)
-            .then(nombreCliente => {
-              pedidoObj.nombreCliente = nombreCliente;
-
-              // Verificar si productos existe y es un array
-              const promisesProductos = Array.isArray(pedido.productos) ? pedido.productos.map(producto => {
-                return obtenerDescripcionProducto(producto.idProducto)
-                  .then(descripcion => {
-                    pedidoObj.Productos.push(descripcion);
-                  })
-                  .catch(error => {
-                    console.error('Error al obtener la descripción del producto:', error);
-                  });
-              }) : [];
-
-              // Verificar si ofertas existe y es un array
-              const promisesOfertas = Array.isArray(pedido.ofertas) ? pedido.ofertas.map(oferta => {
-                return obtenerNombreOferta(oferta.idOferta)
-                  .then(nombre => {
-                    pedidoObj.Ofertas.push(nombre);
-                  })
-                  .catch(error => {
-                    console.error('Error al obtener el nombre de la oferta:', error);
-                  });
-              }) : [];
-
-              Promise.all([...promisesProductos, ...promisesOfertas])
-                .then(() => {
-                  // Una vez que se han obtenido todas las descripciones de productos y nombres de ofertas, mostrar el pedido
-                  mostrarPedidoEnHTML(pedidoObj, contenedorPedidos);
-                });
-            })
-            .catch(error => {
-              console.error('Error al obtener el nombre del cliente:', error);
-            });
-        });
-      } else {
-        console.log('No hay pedidos disponibles.');
-      }
-    })
-    .catch((error) => {
-      console.error('Error al leer los pedidos:', error);
-    });
-}*/
-
 function mostrarPedidos(nombreFiltro, consultaBusqueda = '') {
   const pedidosRef = firebase.database().ref('Pedido');
 
@@ -411,7 +329,74 @@ function mostrarPedidos(nombreFiltro, consultaBusqueda = '') {
     });
 }
 
+function mostrarPedidoEnHTML(pedidoObj, contenedor) {
+  const pedidoElement = document.createElement('div');
+  //pedidoElement.className = 'pedido cardboard'; // Agregar las clases 'pedido' y 'cardboard'
+  pedidoElement.className = 'pedido';
 
+  const pedidoId = document.createElement('h3');
+  pedidoId.className = 'pedido-id';
+  pedidoId.textContent = pedidoObj.idPedido;
+
+  const clienteInfo = document.createElement('p');
+  clienteInfo.className = 'cliente';
+  clienteInfo.textContent = `Cliente: ${pedidoObj.nombreCliente}`;
+
+  const fechaInfo = document.createElement('p');
+  fechaInfo.className = 'fecha';
+  fechaInfo.textContent = `Fecha: ${pedidoObj.fechaHora.toLocaleString()}`;
+
+  const importeInfo = document.createElement('p');
+  importeInfo.className = 'importe';
+  importeInfo.textContent = `Importe: $${pedidoObj.importe.toFixed(2)}`;
+
+  const productosInfo = document.createElement('p');
+  productosInfo.className = 'productos';
+  if (pedidoObj.Productos.length > 0) {
+    productosInfo.textContent = `Productos: ${pedidoObj.Productos.join(', ')}`;
+  }
+
+  const ofertasInfo = document.createElement('p');
+  ofertasInfo.className = 'ofertas';
+  if (pedidoObj.Ofertas.length > 0) {
+    ofertasInfo.textContent = `Ofertas: ${pedidoObj.Ofertas.join(', ')}`;
+  }
+
+  const menuInfo = document.createElement('p');
+  menuInfo.className = 'menu';
+  if (pedidoObj.menus && pedidoObj.menus.length > 0) {
+    menuInfo.textContent = `Menú ID: ${pedidoObj.menus[0].idMenu}`;
+  }
+
+  pedidoElement.appendChild(pedidoId);
+  pedidoElement.appendChild(clienteInfo);
+  pedidoElement.appendChild(fechaInfo);
+  pedidoElement.appendChild(importeInfo);
+  pedidoElement.appendChild(productosInfo);
+  pedidoElement.appendChild(ofertasInfo);
+  pedidoElement.appendChild(menuInfo);
+
+  // Agregar el botón de entrega después de todos los otros elementos
+  if (!pedidoObj.entregado) {
+    const entregarBtn = document.createElement('button');
+    //entregarBtn.className = 'entregar-btn';
+    entregarBtn.textContent = 'Entregar';
+    entregarBtn.classList.add('btn-entregar');
+    entregarBtn.onclick = function () {
+      entregarPedido(pedidoObj.idPedido);
+    };
+    pedidoElement.appendChild(entregarBtn);
+    pedidoElement.classList.add('pedido-entregado');
+  } else {
+    pedidoElement.classList.add('pedido-sin-entregar');
+  }
+
+  contenedor.appendChild(pedidoElement);
+}
+
+
+
+/*
 function mostrarPedidoEnHTML(pedidoObj, contenedor) {
   const pedidoElement = document.createElement('div');
   pedidoElement.className = 'pedido cardboard'; // Agregar las clases 'pedido' y 'cardboard'
@@ -432,36 +417,7 @@ function mostrarPedidoEnHTML(pedidoObj, contenedor) {
   `;
 
   contenedor.appendChild(pedidoElement);
-}
-
-
-/*
-function mostrarPedidoEnHTML(pedidoObj, contenedor) {
-  const pedidoElement = document.createElement('div');
-  pedidoElement.className = 'pedido';
-
-  let menuInfo = '';
-  if (pedidoObj.menus && pedidoObj.menus.length > 0) {
-    menuInfo = `Menú ID: ${pedidoObj.menus[0].idMenu}`;
-  }
-
-  pedidoElement.innerHTML = `
-    <h3>Pedido ID: ${pedidoObj.idPedido}</h3>
-    <p>Cliente: ${pedidoObj.nombreCliente}</p>
-    <p>Fecha: ${pedidoObj.fechaHora.toLocaleString()}</p>
-    <p>Importe: $${pedidoObj.importe.toFixed(2)}</p>
-    ${pedidoObj.Productos.length > 0 ? `<p>Productos: ${pedidoObj.Productos.join(', ')}</p>` : ''}
-    ${pedidoObj.Ofertas.length > 0 ? `<p>Ofertas: ${pedidoObj.Ofertas.join(', ')}</p>` : ''}
-    ${menuInfo ? `<p>${menuInfo}</p>` : ''}
-  `;
-
-  contenedor.appendChild(pedidoElement);
-}
-*/
-
-
-
-
+}*/
 
 
 
@@ -669,7 +625,7 @@ function setUpAnadirProd() {
     btnCancelar.type = 'button'; // Evitar que el botón envíe el formulario
     btnCancelar.textContent = 'Cancelar';
     btnCancelar.classList.add('btnCancelar');
-    btnCancelar.addEventListener('click', function() {
+    btnCancelar.addEventListener('click', function () {
       restoSeccion.innerHTML = '';
       barraBusqueda.style.display = '';
       menuDesplegable.style.display = '';
@@ -762,12 +718,12 @@ function setUpAnadirOferta() {
     btnCancelar.type = 'button';
     btnCancelar.textContent = 'Cancelar';
     btnCancelar.classList.add('btnCancelar');
-    btnCancelar.addEventListener('click', function() {
+    btnCancelar.addEventListener('click', function () {
       barraBusqueda.style.display = '';
       dropdown.style.display = '';
       restoSeccion.innerHTML = '';
       mostrarBarraBusquedaOferta();
-      return 
+      return
     });
 
     form.appendChild(btnEnviar);
