@@ -1,0 +1,432 @@
+{
+  "Cliente": [
+    {
+      "Bloqueado": false,
+      "Contraseña": "yz/g449HXXeSlnpBF9bNtHEJpaK0dM7VonPNqEV5UszvDcxbzjFy2CYakv+dG3wh8cgJrwU+dKvIyuVsBjJ7Lxwlsh/3r+Xi9+S6bwbuiKk=",
+      "Correo": "juan@example.com",
+      "IdCliente": 0,
+      "Nombre": "Juanaaa",
+      "Puntos": 679,
+      "Telefono": "123456789"
+    }
+  ],
+  "Cupon": [
+    null,
+    {
+      "Canjeado": true,
+      "IdCliente": 1,
+      "IdCupon": 1,
+      "Puntos": 500,
+      "Valor": 3.99,
+      "formattedValue": "3.99€"
+    },
+    {
+      "Canjeado": true,
+      "IdCliente": 1,
+      "IdCupon": 2,
+      "Puntos": 500,
+      "Valor": 3.99,
+      "formattedValue": "3.99€"
+    },
+    {
+      "Canjeado": true,
+      "IdCliente": 1,
+      "IdCupon": 3,
+      "Puntos": 1000,
+      "Valor": 8.99,
+      "formattedValue": "8.99€"
+    },
+    {
+      "Canjeado": true,
+      "IdCliente": 1,
+      "IdCupon": 4,
+      "Puntos": 1000,
+      "Valor": 8.99,
+      "formattedValue": "8.99€"
+    },
+    {
+      "Canjeado": true,
+      "IdCliente": 1,
+      "IdCupon": 5,
+      "Puntos": 500,
+      "Valor": 3.99,
+      "formattedValue": "3.99€"
+    },
+    {
+      "Canjeado": true,
+      "IdCliente": 1,
+      "IdCupon": 6,
+      "Puntos": 500,
+      "Valor": 3.99,
+      "formattedValue": "3.99€"
+    },
+    {
+      "Canjeado": false,
+      "IdCliente": 1,
+      "IdCupon": 7,
+      "Puntos": 1000,
+      "Valor": 8.99,
+      "formattedValue": "8.99€"
+    },
+    {
+      "Canjeado": false,
+      "IdCliente": 1,
+      "IdCupon": 8,
+      "Puntos": 500,
+      "Valor": 3.99,
+      "formattedValue": "3.99€"
+    }
+  ],
+  "Oferta": [
+    {
+      "Activada": true,
+      "Condiciones": [
+        "Condición 1",
+        "Condición 2"
+      ],
+      "Descuento": 0.15,
+      "IdOferta": 0,
+      "MenusId": [
+        1,
+        2
+      ],
+      "Nombre": "Brasa Crispy",
+      "OfertasId": [
+        1,
+        2
+      ],
+      "ProductosId": [
+        1,
+        2
+      ],
+      "RutaImagenOferta": "https://previews.123rf.com/images/magone/magone1311/magone131100027/23389096-pollo-a-la-parrilla-y-papas-fritas-franc%C3%A9s-en-la-placa-blanca.jpg"
+    }
+  ],
+  "Pedido": [
+    {
+      "Ofertas": [
+        {
+          "IdOferta": 0
+        }
+      ],
+      "Productos": [
+        {
+          "IdProducto": 1
+        },
+        {
+          "IdProducto": 2
+        }
+      ],
+      "clienteId": 1,
+      "entregado": true,
+      "fechaHora": {
+        "chronology": {
+          "calendarType": "iso8601",
+          "id": "ISO"
+        },
+        "dayOfMonth": 11,
+        "dayOfWeek": "SATURDAY",
+        "dayOfYear": 132,
+        "hour": 9,
+        "minute": 22,
+        "month": "MAY",
+        "monthValue": 5,
+        "nano": 521011000,
+        "second": 31,
+        "year": 2024
+      },
+      "idPedido": 10,
+      "importe": 10.1
+    },
+    {
+      "clienteId": 0,
+      "entregado": false,
+      "idPedido": 0,
+      "importe": 16.46,
+      "ofertas": [
+        {
+          "activada": true,
+          "condiciones": [
+            "Condición 1",
+            "Condición 2"
+          ],
+          "descuento": 0.15,
+          "idOferta": 0,
+          "nombre": "Brasa Crispy",
+          "precio": 11.47,
+          "productos": [
+            {
+              "descripcion": "Pollo a la brasa",
+              "idProducto": 1,
+              "ingredientes": "Pollo asado con hierbas y especias",
+              "precio": 10.99,
+              "rutaImagen": "https://img.freepik.com/fotos-premium/pollo-asado-navideno-especias-hierbas-sobre-fondo-blanco-madera-espacio-copiar-concepto-comida-navidena_652855-751.jpg?w=1380",
+              "stock": 100,
+              "tipo": "comida principal"
+            },
+            {
+              "descripcion": "Papas fritas",
+              "idProducto": 2,
+              "ingredientes": "Papas cortadas en tiras y fritas",
+              "precio": 2.5,
+              "rutaImagen": "https://www.mardequel.com/12-product_medium_default/patatas-fritas-38.jpg",
+              "stock": 0,
+              "tipo": "acompañamiento"
+            }
+          ],
+          "productosId": [
+            1,
+            2
+          ],
+          "rutaImagenOferta": "https://previews.123rf.com/images/magone/magone1311/magone131100027/23389096-pollo-a-la-parrilla-y-papas-fritas-franc%C3%A9s-en-la-placa-blanca.jpg"
+        }
+      ],
+      "ofertasId": [
+        0
+      ],
+      "productos": [
+        {
+          "descripcion": "Flan casero",
+          "idProducto": 5,
+          "ingredientes": "Leche, huevos, azúcar y caramelo",
+          "precio": 4.99,
+          "rutaImagen": "https://cdn0.recetasgratis.net/es/posts/0/4/3/flan_napolitano_15340_600.jpg",
+          "stock": 30,
+          "tipo": "postre"
+        }
+      ],
+      "productosId": [
+        5
+      ]
+    },
+    {
+      "clienteId": 0,
+      "entregado": false,
+      "idPedido": 0,
+      "importe": 16.432000000000002,
+      "menus": [
+        {
+          "idBebida": 3,
+          "idComplemento": 2,
+          "idEntrante": 1,
+          "idMenu": 1359,
+          "precioMenu": 13.932
+        }
+      ],
+      "productos": [
+        {
+          "descripcion": "Papas fritas",
+          "idProducto": 2,
+          "ingredientes": "Papas cortadas en tiras y fritas",
+          "precio": 2.5,
+          "rutaImagen": "https://www.mardequel.com/12-product_medium_default/patatas-fritas-38.jpg",
+          "stock": 0,
+          "tipo": "acompañamiento"
+        }
+      ],
+      "productosId": [
+        2
+      ]
+    },
+    {
+      "clienteId": 0,
+      "entregado": false,
+      "idPedido": 0,
+      "importe": 25.402,
+      "menus": [
+        {
+          "idBebida": 3,
+          "idComplemento": 2,
+          "idEntrante": 1,
+          "idMenu": 7764,
+          "precioMenu": 13.932
+        }
+      ],
+      "ofertas": [
+        {
+          "activada": true,
+          "condiciones": [
+            "Condición 1",
+            "Condición 2"
+          ],
+          "descuento": 0.15,
+          "idOferta": 0,
+          "nombre": "Brasa Crispy",
+          "precio": 11.47,
+          "productos": [
+            {
+              "descripcion": "Pollo a la brasa",
+              "idProducto": 1,
+              "ingredientes": "Pollo asado con hierbas y especias",
+              "precio": 10.99,
+              "rutaImagen": "https://img.freepik.com/fotos-premium/pollo-asado-navideno-especias-hierbas-sobre-fondo-blanco-madera-espacio-copiar-concepto-comida-navidena_652855-751.jpg?w=1380",
+              "stock": 100,
+              "tipo": "comida principal"
+            },
+            {
+              "descripcion": "Papas fritas",
+              "idProducto": 2,
+              "ingredientes": "Papas cortadas en tiras y fritas",
+              "precio": 2.5,
+              "rutaImagen": "https://www.mardequel.com/12-product_medium_default/patatas-fritas-38.jpg",
+              "stock": 0,
+              "tipo": "acompañamiento"
+            }
+          ],
+          "productosId": [
+            1,
+            2
+          ],
+          "rutaImagenOferta": "https://previews.123rf.com/images/magone/magone1311/magone131100027/23389096-pollo-a-la-parrilla-y-papas-fritas-franc%C3%A9s-en-la-placa-blanca.jpg"
+        }
+      ],
+      "ofertasId": [
+        0
+      ]
+    }
+  ],
+  "Producto": [
+    {
+      "Descripcion": "Pollo a la brasa",
+      "IdProducto": 1,
+      "Ingredientes": "Pollo asado con hierbas y especias",
+      "Precio": 10.99,
+      "RutaImagen": "https://img.freepik.com/fotos-premium/pollo-asado-navideno-especias-hierbas-sobre-fondo-blanco-madera-espacio-copiar-concepto-comida-navidena_652855-751.jpg?w=1380",
+      "Stock": 100,
+      "Tipo": "comida principal"
+    },
+    {
+      "Descripcion": "Papas fritas",
+      "IdProducto": 2,
+      "Ingredientes": "Papas cortadas en tiras y fritas",
+      "Precio": 2.5,
+      "RutaImagen": "https://www.mardequel.com/12-product_medium_default/patatas-fritas-38.jpg",
+      "Stock": 0,
+      "Tipo": "acompañamiento"
+    },
+    {
+      "Descripcion": "Refresco de cola",
+      "IdProducto": 3,
+      "Ingredientes": "Agua carbonatada, azúcar y extracto de cola",
+      "Precio": 1.99,
+      "RutaImagen": "https://www.encopadebalon.com/3493-large_default/coca-cola-lata-33cl-caja-24unid.jpg",
+      "Stock": 150,
+      "Tipo": "bebida"
+    },
+    {
+      "Descripcion": "Ensalada fresca",
+      "IdProducto": 4,
+      "Ingredientes": "Lechuga, tomate, pepino y aderezo",
+      "Precio": 3.5,
+      "RutaImagen": "https://img.freepik.com/fotos-premium/ensalada-verduras-frescas-cuenco-ceramica-aislado-sobre-fondo-blanco_183587-2385.jpg?w=1380",
+      "Stock": 50,
+      "Tipo": "entrante"
+    },
+    {
+      "Descripcion": "Flan casero",
+      "IdProducto": 5,
+      "Ingredientes": "Leche, huevos, azúcar y caramelo",
+      "Precio": 4.99,
+      "RutaImagen": "https://cdn0.recetasgratis.net/es/posts/0/4/3/flan_napolitano_15340_600.jpg",
+      "Stock": 30,
+      "Tipo": "postre"
+    },
+    {
+      "Descripcion": "Hamburguesa clásica",
+      "IdProducto": 6,
+      "Ingredientes": "Carne de res, lechuga, tomate, cebolla y salsa especial",
+      "Precio": 8.99,
+      "RutaImagen": "https://i0.wp.com/elplanetaurbano.com/wp-content/uploads/2023/05/Dia-de-la-Hamburguesa-Planeta-Urbano-2023-Baum-2.jpg?resize=1250%2C781&ssl=1",
+      "Stock": 80,
+      "Tipo": "comida principal"
+    },
+    {
+      "Descripcion": "Ensalada César",
+      "IdProducto": 7,
+      "Ingredientes": "Lechuga romana, pollo a la parrilla, queso parmesano, crutones y aderezo César",
+      "Precio": 6.5,
+      "RutaImagen": "https://previews.123rf.com/images/nitr/nitr1105/nitr110500019/9574604-ensalada-c%C3%A9sar-sobre-fondo-blanco.jpg",
+      "Stock": 40,
+      "Tipo": "acompañamiento"
+    },
+    {
+      "Descripcion": "Agua mineral",
+      "IdProducto": 8,
+      "Ingredientes": "Agua purificada",
+      "Precio": 0.99,
+      "RutaImagen": "https://i.pinimg.com/736x/c1/72/de/c172de4175d336ee5d4655a1d63a365e.jpg",
+      "Stock": 120,
+      "Tipo": "bebida"
+    },
+    {
+      "Descripcion": "Sopa de verduras",
+      "IdProducto": 9,
+      "Ingredientes": "Caldo de verduras con zanahoria, calabacín, apio y cebolla",
+      "Precio": 4.25,
+      "RutaImagen": "https://img.freepik.com/fotos-premium/sopa-verduras-aislado-sobre-fondo-blanco_488220-4112.jpg",
+      "Stock": 60,
+      "Tipo": "entrante"
+    },
+    {
+      "Descripcion": "Empanadas Argentinas",
+      "IdProducto": 10,
+      "Ingredientes": "hojaldre, relleno de empanada",
+      "Precio": 3,
+      "RutaImagen": "https://imagenes.20minutos.es/files/image_1920_1080/uploads/imagenes/2023/09/27/empanadas-sabores-express.jpeg",
+      "Stock": 10,
+      "Tipo": "comida principal"
+    },
+    {
+      "Descripcion": "Arroz",
+      "IdProducto": 11,
+      "Ingredientes": "Arroz",
+      "Precio": 10,
+      "RutaImagen": "https://d36fw6y2wq3bat.cloudfront.net/recipes/el-perfecto-arroz-blanco/900/el-perfecto-arroz-blanco_version_1655956867.jpg",
+      "Stock": 50,
+      "Tipo": "postre"
+    },
+    {
+      "Descripcion": "Café",
+      "IdProducto": 12,
+      "Ingredientes": "Café molido, agua",
+      "Precio": 2.5,
+      "RutaImagen": "https://media.istockphoto.com/id/163939725/es/foto/taza-de-caf%C3%A9.jpg?s=612x612&w=0&k=20&c=Kq7jtc3LaDbM-X_sQ2QE-4f2xUUeqMpO5rIN4QjuPgI=",
+      "Stock": 100,
+      "Tipo": "bebida"
+    },
+    {
+      "Descripcion": "Té helado",
+      "IdProducto": 13,
+      "Ingredientes": "Té negro, hielo, azúcar",
+      "Precio": 2,
+      "RutaImagen": "https://cdn7.kiwilimon.com/recetaimagen/3613/18285.jpg",
+      "Stock": 100,
+      "Tipo": "bebida"
+    },
+    {
+      "Descripcion": "Batido de fresa",
+      "IdProducto": 14,
+      "Ingredientes": "Fresas, leche, azúcar",
+      "Precio": 3.5,
+      "RutaImagen": "https://t1.uc.ltmcdn.com/es/posts/1/2/5/como_hacer_batido_de_fresa_7521_orig.jpg",
+      "Stock": 50,
+      "Tipo": "bebida"
+    }
+  ],
+  "Usuario": [
+    {
+      "Contraseña": "\"admin\"",
+      "EsAdmin": true,
+      "IdUsuario": 0,
+      "Nombre": "\"admin\"",
+      "Usuario": "\"usuario admin\""
+    },
+    {
+      "Contraseña": "contraseña2",
+      "EsAdmin": false,
+      "Id": 2,
+      "Nombre": "Empleado",
+      "Usuario": "usuario2"
+    }
+  ]
+}

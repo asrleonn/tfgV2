@@ -248,34 +248,40 @@ function mostrarOfertas(nombreFiltro, consultaBusqueda = '') {
     });
 }
 
+/*
 function mostrarPedidos(nombreFiltro, consultaBusqueda = '') {
-
   const pedidosRef = firebase.database().ref('Pedido');
 
   pedidosRef.once('value')
     .then((snapshot) => {
       const pedidos = snapshot.val();
       const contenedorPedidos = document.getElementById('resto-seccion-pedidos');
+      contenedorPedidos.innerHTML = '';
 
       if (pedidos) {
         Object.keys(pedidos).forEach((key) => {
           const pedido = pedidos[key];
+
+          // Verificar la existencia de fechaHora y sus propiedades
+          const fechaHora = pedido.fechaHora ? new Date(
+            pedido.fechaHora.year,
+            pedido.fechaHora.monthValue - 1,
+            pedido.fechaHora.dayOfMonth,
+            pedido.fechaHora.hour,
+            pedido.fechaHora.minute,
+            pedido.fechaHora.second,
+            pedido.fechaHora.nano / 1000000
+          ) : new Date(); // Valor predeterminado si no existe fechaHora
+
           const pedidoObj = {
-            idPedido: pedido.idPedido,
-            clienteId: pedido.clienteId,
-            entregado: pedido.entregado,
-            fechaHora: new Date(
-              pedido.fechaHora.year,
-              pedido.fechaHora.monthValue - 1,
-              pedido.fechaHora.dayOfMonth,
-              pedido.fechaHora.hour,
-              pedido.fechaHora.minute,
-              pedido.fechaHora.second,
-              pedido.fechaHora.nano / 1000000
-            ),
-            importe: pedido.importe,
+            idPedido: key, // Aquí se obtiene el ID del pedido
+            clienteId: pedido.clienteId || '',
+            entregado: pedido.entregado || false,
+            fechaHora: fechaHora,
+            importe: pedido.importe || 0,
             Productos: [],
-            Ofertas: []
+            Ofertas: [],
+            menus: pedido.menus || []
           };
 
           // Obtener nombre del cliente
@@ -283,65 +289,114 @@ function mostrarPedidos(nombreFiltro, consultaBusqueda = '') {
             .then(nombreCliente => {
               pedidoObj.nombreCliente = nombreCliente;
 
-              // Obtener descripciones de productos
-              if (pedido.Productos) {
-                const promisesProductos = pedido.Productos.map(producto => {
-                  return obtenerDescripcionProducto(producto.IdProducto)
-                    .then(descripcion => {
-                      pedidoObj.Productos.push(descripcion);
-                    })
-                    .catch(error => {
-                      console.error('Error al obtener la descripción del producto:', error);
-                    });
-                });
-
-                Promise.all(promisesProductos)
-                  .then(() => {
-                    // Obtener nombres de ofertas si las hay
-                    if (pedido.Ofertas) {
-                      const promisesOfertas = pedido.Ofertas.map(oferta => {
-                        return obtenerNombreOferta(oferta.IdOferta)
-                          .then(nombre => {
-                            pedidoObj.Ofertas.push(nombre);
-                          })
-                          .catch(error => {
-                            console.error('Error al obtener el nombre de la oferta:', error);
-                          });
-                      });
-
-                      Promise.all(promisesOfertas)
-                        .then(() => {
-                          // Una vez que se han obtenido todas las descripciones de productos y nombres de ofertas, mostrar el pedido
-                          mostrarPedidoEnHTML(pedidoObj, contenedorPedidos);
-                        });
-                    } else {
-                      // Si no hay ofertas en el pedido, mostrar el pedido sin esperar a obtener nombres de ofertas
-                      mostrarPedidoEnHTML(pedidoObj, contenedorPedidos);
-                    }
+              // Verificar si productos existe y es un array
+              const promisesProductos = Array.isArray(pedido.productos) ? pedido.productos.map(producto => {
+                return obtenerDescripcionProducto(producto.idProducto)
+                  .then(descripcion => {
+                    pedidoObj.Productos.push(descripcion);
+                  })
+                  .catch(error => {
+                    console.error('Error al obtener la descripción del producto:', error);
                   });
-              } else {
-                // Si no hay productos en el pedido, mostrar el pedido sin esperar a obtener descripciones de productos
-                if (pedido.Ofertas) {
-                  const promisesOfertas = pedido.Ofertas.map(oferta => {
-                    return obtenerNombreOferta(oferta.IdOferta)
-                      .then(nombre => {
-                        pedidoObj.Ofertas.push(nombre);
-                      })
-                      .catch(error => {
-                        console.error('Error al obtener el nombre de la oferta:', error);
-                      });
-                  });
+              }) : [];
 
-                  Promise.all(promisesOfertas)
-                    .then(() => {
-                      // Una vez que se han obtenido todos los nombres de ofertas, mostrar el pedido
-                      mostrarPedidoEnHTML(pedidoObj, contenedorPedidos);
-                    });
-                } else {
-                  // Si no hay productos ni ofertas en el pedido, mostrar el pedido sin esperar a obtener datos adicionales
+              // Verificar si ofertas existe y es un array
+              const promisesOfertas = Array.isArray(pedido.ofertas) ? pedido.ofertas.map(oferta => {
+                return obtenerNombreOferta(oferta.idOferta)
+                  .then(nombre => {
+                    pedidoObj.Ofertas.push(nombre);
+                  })
+                  .catch(error => {
+                    console.error('Error al obtener el nombre de la oferta:', error);
+                  });
+              }) : [];
+
+              Promise.all([...promisesProductos, ...promisesOfertas])
+                .then(() => {
+                  // Una vez que se han obtenido todas las descripciones de productos y nombres de ofertas, mostrar el pedido
                   mostrarPedidoEnHTML(pedidoObj, contenedorPedidos);
-                }
-              }
+                });
+            })
+            .catch(error => {
+              console.error('Error al obtener el nombre del cliente:', error);
+            });
+        });
+      } else {
+        console.log('No hay pedidos disponibles.');
+      }
+    })
+    .catch((error) => {
+      console.error('Error al leer los pedidos:', error);
+    });
+}*/
+
+function mostrarPedidos(nombreFiltro, consultaBusqueda = '') {
+  const pedidosRef = firebase.database().ref('Pedido');
+
+  pedidosRef.once('value')
+    .then((snapshot) => {
+      const pedidos = snapshot.val();
+      const contenedorPedidos = document.getElementById('resto-seccion-pedidos');
+      contenedorPedidos.innerHTML = '';
+
+      if (pedidos) {
+        // Convertir los pedidos a un array para ordenarlos
+        const pedidosArray = Object.keys(pedidos).map(key => {
+          const pedido = pedidos[key];
+          const fechaHora = pedido.fechaHora ? new Date(
+            pedido.fechaHora.year,
+            pedido.fechaHora.monthValue - 1,
+            pedido.fechaHora.dayOfMonth,
+            pedido.fechaHora.hour,
+            pedido.fechaHora.minute,
+            pedido.fechaHora.second,
+            pedido.fechaHora.nano / 1000000
+          ) : new Date(); // Valor predeterminado si no existe fechaHora
+
+          return {
+            idPedido: key,
+            clienteId: pedido.clienteId || '',
+            entregado: pedido.entregado || false,
+            fechaHora: fechaHora,
+            importe: pedido.importe || 0,
+            Productos: Array.isArray(pedido.productos) ? pedido.productos.map(producto => producto.idProducto) : [],
+            Ofertas: Array.isArray(pedido.ofertas) ? pedido.ofertas.map(oferta => oferta.idOferta) : [],
+            menus: pedido.menus || []
+          };
+        });
+
+        // Ordenar los pedidos por fecha
+        pedidosArray.sort((a, b) => a.fechaHora - b.fechaHora);
+
+        // Mostrar cada pedido en HTML
+        pedidosArray.forEach(pedido => {
+          obtenerNombreCliente(pedido.clienteId)
+            .then(nombreCliente => {
+              pedido.nombreCliente = nombreCliente;
+
+              const promisesProductos = pedido.Productos.map(productoId => {
+                return obtenerDescripcionProducto(productoId)
+                  .then(descripcion => descripcion)
+                  .catch(error => {
+                    console.error('Error al obtener la descripción del producto:', error);
+                  });
+              });
+
+              const promisesOfertas = pedido.Ofertas.map(ofertaId => {
+                return obtenerNombreOferta(ofertaId)
+                  .then(nombre => nombre)
+                  .catch(error => {
+                    console.error('Error al obtener el nombre de la oferta:', error);
+                  });
+              });
+
+              Promise.all([...promisesProductos, ...promisesOfertas])
+                .then(descripciones => {
+                  pedido.Productos = descripciones.slice(0, pedido.Productos.length);
+                  pedido.Ofertas = descripciones.slice(pedido.Productos.length);
+
+                  mostrarPedidoEnHTML(pedido, contenedorPedidos);
+                });
             })
             .catch(error => {
               console.error('Error al obtener el nombre del cliente:', error);
@@ -356,6 +411,82 @@ function mostrarPedidos(nombreFiltro, consultaBusqueda = '') {
     });
 }
 
+
+function mostrarPedidoEnHTML(pedidoObj, contenedor) {
+  const pedidoElement = document.createElement('div');
+  pedidoElement.className = 'pedido cardboard'; // Agregar las clases 'pedido' y 'cardboard'
+
+  let menuInfo = '';
+  if (pedidoObj.menus && pedidoObj.menus.length > 0) {
+    menuInfo = `Menú ID: ${pedidoObj.menus[0].idMenu}`;
+  }
+
+  pedidoElement.innerHTML = `
+    <h3 class="pedido-id">${pedidoObj.idPedido}</h3>
+    <p class="cliente">Cliente: ${pedidoObj.nombreCliente}</p>
+    <p class="fecha">Fecha: ${pedidoObj.fechaHora.toLocaleString()}</p>
+    <p class="importe">Importe: $${pedidoObj.importe.toFixed(2)}</p>
+    ${pedidoObj.Productos.length > 0 ? `<p class="productos">Productos: ${pedidoObj.Productos.join(', ')}</p>` : ''}
+    ${pedidoObj.Ofertas.length > 0 ? `<p class="ofertas">Ofertas: ${pedidoObj.Ofertas.join(', ')}</p>` : ''}
+    ${menuInfo ? `<p class="menu">${menuInfo}</p>` : ''}
+  `;
+
+  contenedor.appendChild(pedidoElement);
+}
+
+
+/*
+function mostrarPedidoEnHTML(pedidoObj, contenedor) {
+  const pedidoElement = document.createElement('div');
+  pedidoElement.className = 'pedido';
+
+  let menuInfo = '';
+  if (pedidoObj.menus && pedidoObj.menus.length > 0) {
+    menuInfo = `Menú ID: ${pedidoObj.menus[0].idMenu}`;
+  }
+
+  pedidoElement.innerHTML = `
+    <h3>Pedido ID: ${pedidoObj.idPedido}</h3>
+    <p>Cliente: ${pedidoObj.nombreCliente}</p>
+    <p>Fecha: ${pedidoObj.fechaHora.toLocaleString()}</p>
+    <p>Importe: $${pedidoObj.importe.toFixed(2)}</p>
+    ${pedidoObj.Productos.length > 0 ? `<p>Productos: ${pedidoObj.Productos.join(', ')}</p>` : ''}
+    ${pedidoObj.Ofertas.length > 0 ? `<p>Ofertas: ${pedidoObj.Ofertas.join(', ')}</p>` : ''}
+    ${menuInfo ? `<p>${menuInfo}</p>` : ''}
+  `;
+
+  contenedor.appendChild(pedidoElement);
+}
+*/
+
+
+
+
+
+
+
+// Función para obtener el ID de un menú
+function obtenerMenuId(idMenu) {
+  return new Promise((resolve, reject) => {
+    const menuRef = firebase.database().ref('Menus').child(idMenu);
+    menuRef.once('value')
+      .then(snapshot => {
+        if (snapshot.exists()) {
+          resolve(snapshot.val().idMenu);
+        } else {
+          // Si el menú no existe, resolver con un valor nulo
+          resolve(null);
+        }
+      })
+      .catch(error => {
+        reject(error);
+      });
+  });
+}
+
+
+
+/*
 function mostrarPedidoEnHTML(pedido, contenedor) {
 
   contenedor.innerHTML = '';
@@ -415,7 +546,8 @@ function mostrarPedidoEnHTML(pedido, contenedor) {
   }
 
   contenedor.appendChild(pedidoDiv);
-}
+}*/
+
 
 function mostrarClientes(nombreFiltro, consultaBusqueda = '') {
   var listaClientes = document.getElementById('lista-clientes');

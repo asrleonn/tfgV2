@@ -29,7 +29,8 @@
 }
 
 #resto-seccion-productos,
-#resto-seccion-ofertas {
+#resto-seccion-ofertas,
+#resto-seccion-pedidos {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
