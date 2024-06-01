@@ -396,28 +396,6 @@ function mostrarPedidoEnHTML(pedidoObj, contenedor) {
 
 
 
-/*
-function mostrarPedidoEnHTML(pedidoObj, contenedor) {
-  const pedidoElement = document.createElement('div');
-  pedidoElement.className = 'pedido cardboard'; // Agregar las clases 'pedido' y 'cardboard'
-
-  let menuInfo = '';
-  if (pedidoObj.menus && pedidoObj.menus.length > 0) {
-    menuInfo = `Menú ID: ${pedidoObj.menus[0].idMenu}`;
-  }
-
-  pedidoElement.innerHTML = `
-    <h3 class="pedido-id">${pedidoObj.idPedido}</h3>
-    <p class="cliente">Cliente: ${pedidoObj.nombreCliente}</p>
-    <p class="fecha">Fecha: ${pedidoObj.fechaHora.toLocaleString()}</p>
-    <p class="importe">Importe: $${pedidoObj.importe.toFixed(2)}</p>
-    ${pedidoObj.Productos.length > 0 ? `<p class="productos">Productos: ${pedidoObj.Productos.join(', ')}</p>` : ''}
-    ${pedidoObj.Ofertas.length > 0 ? `<p class="ofertas">Ofertas: ${pedidoObj.Ofertas.join(', ')}</p>` : ''}
-    ${menuInfo ? `<p class="menu">${menuInfo}</p>` : ''}
-  `;
-
-  contenedor.appendChild(pedidoElement);
-}*/
 
 
 
@@ -439,71 +417,6 @@ function obtenerMenuId(idMenu) {
       });
   });
 }
-
-
-
-/*
-function mostrarPedidoEnHTML(pedido, contenedor) {
-
-  contenedor.innerHTML = '';
-
-  const pedidoDiv = document.createElement('div');
-  pedidoDiv.classList.add('cliente-div');
-  pedidoDiv.classList.add('pedido-div');
-
-  // Color de fondo y borde dependiendo del estado de entregado
-  if (pedido.entregado) {
-    pedidoDiv.style.backgroundColor = '#ffcdd2'; // Rojo si está entregado
-    pedidoDiv.style.borderColor = '#cc0000'; // Rojo si está entregado
-  } else {
-    pedidoDiv.style.backgroundColor = '#e1e8ec'; // Azul si no está entregado
-    pedidoDiv.style.borderColor = '#284a66'; // Azul si no está entregado
-  }
-
-  pedidoDiv.style.borderRadius = '8px'; // Borde redondeado
-  pedidoDiv.style.boxShadow = '2px 2px 10px rgba(0, 0, 0, 0.1)'; // Sombra
-
-  const nombreClienteP = document.createElement('p');
-  nombreClienteP.innerHTML = `<b>Nombre del cliente:</b> ${pedido.nombreCliente}`;
-  pedidoDiv.appendChild(nombreClienteP);
-
-  if (pedido.Ofertas.length > 0) {
-    const ofertasP = document.createElement('p');
-    ofertasP.innerHTML = `<b>Ofertas:</b><br>${pedido.Ofertas.join('<br>')}`;
-    pedidoDiv.appendChild(ofertasP);
-  }
-
-  if (pedido.Productos.length > 0) {
-    const productosP = document.createElement('p');
-    productosP.innerHTML = `<b>Productos:</b><br>${pedido.Productos.join('<br>')}`;
-    pedidoDiv.appendChild(productosP);
-  }
-
-  const fechaP = document.createElement('p');
-  const fechaString = `${pedido.fechaHora.getDate()}/${pedido.fechaHora.getMonth() + 1}/${pedido.fechaHora.getFullYear()} ${pedido.fechaHora.getHours()}:${pedido.fechaHora.getMinutes()}`;
-  fechaP.innerHTML = `<b>Fecha:</b> ${fechaString}`;
-  pedidoDiv.appendChild(fechaP);
-
-  const importeP = document.createElement('p');
-  importeP.innerHTML = `<b>Importe:</b> ${pedido.importe}`;
-  pedidoDiv.appendChild(importeP);
-
-  if (!pedido.entregado) {
-    const botonHecho = document.createElement('button');
-    botonHecho.classList.add('boton-hecho');
-    botonHecho.textContent = 'Hecho';
-    pedidoDiv.appendChild(botonHecho);
-
-    // Estilo para el botón "Hecho"
-    botonHecho.style.position = 'absolute';
-    botonHecho.style.right = '20px';
-    botonHecho.style.top = '50%';
-    botonHecho.style.transform = 'translateY(-50%)';
-  }
-
-  contenedor.appendChild(pedidoDiv);
-}*/
-
 
 function mostrarClientes(nombreFiltro, consultaBusqueda = '') {
   var listaClientes = document.getElementById('lista-clientes');
