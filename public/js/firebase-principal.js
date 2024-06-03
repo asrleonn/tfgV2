@@ -248,9 +248,6 @@ function mostrarOfertas(nombreFiltro, consultaBusqueda = '') {
     });
 }
 
-
-
-
 function mostrarPedidos(nombreFiltro, consultaBusqueda = '') {
   const pedidosRef = firebase.database().ref('Pedido');
 
@@ -275,7 +272,7 @@ function mostrarPedidos(nombreFiltro, consultaBusqueda = '') {
           ) : new Date(); // Valor predeterminado si no existe fechaHora
 
           return {
-            idPedido: key,
+            idPedido: pedido.idPedido,
             clienteId: pedido.clienteId || '', // Aquí estamos guardando el ID del cliente
             entregado: pedido.entregado || false,
             fechaHora: fechaHora,
@@ -336,7 +333,6 @@ function mostrarPedidos(nombreFiltro, consultaBusqueda = '') {
     });
 }
 
-
 async function mostrarPedidoEnHTML(pedido, contenedor) {
   // Crear elementos HTML
   const pedidoElement = document.createElement('div');
@@ -351,9 +347,9 @@ async function mostrarPedidoEnHTML(pedido, contenedor) {
   // Agregar contenido a los elementos
   h3.innerHTML = `<b>Pedido</b>: ${pedido.idPedido}`;
   clienteParrafo.innerHTML = `<b>Cliente:</b> ${pedido.clienteId}`;
-  
+
   const nombreCliente = await obtenerNombreCliente(pedido.clienteId);
-    console.log(nombreCliente);
+  console.log(nombreCliente);
   entregadoParrafo.innerHTML = `<b>Entregado:</b> ${pedido.entregado ? 'Sí' : 'No'}`;
   fechaHoraParrafo.innerHTML = `<b>Fecha y Hora:</b> ${pedido.fechaHora.toLocaleString()}`;
   importeParrafo.innerHTML = `<b>Importe:</b> ${pedido.importe.toFixed(2)}`;
@@ -361,9 +357,7 @@ async function mostrarPedidoEnHTML(pedido, contenedor) {
   // Agregar elementos al contenedor
   pedidoElement.appendChild(h3);
   //pedidoElement.appendChild(clienteParrafo);
-  pedidoElement.appendChild(entregadoParrafo);
-  pedidoElement.appendChild(fechaHoraParrafo);
-  pedidoElement.appendChild(importeParrafo);
+
 
   // Condicionalmente agregar párrafos para productos, ofertas y menús
   if (pedido.Productos.length > 0) {
@@ -384,54 +378,62 @@ async function mostrarPedidoEnHTML(pedido, contenedor) {
     pedidoElement.appendChild(menuParrafo);
   }
 
-  contenedor.appendChild(pedidoElement);
-}
-
-
-/*
-function mostrarPedidoEnHTML(pedido, contenedor) {
-  // Crear elementos HTML
-  const pedidoElement = document.createElement('div');
-  const h3 = document.createElement('h3');
-  const clienteParrafo = document.createElement('p');
-  const entregadoParrafo = document.createElement('p');
-  const fechaHoraParrafo = document.createElement('p');
-  const importeParrafo = document.createElement('p');
-  const productosParrafo = document.createElement('p');
-  const ofertasParrafo = document.createElement('p');
-  const menuParrafo = document.createElement('p');
-
-  // Agregar clases a los elementos
-  pedidoElement.className = 'pedido';
-
-  // Agregar contenido a los elementos
-  h3.innerHTML = `<b>Pedido</b>: ${pedido.idPedido}`;
-  // Mostrar solo el ID del cliente
-  clienteParrafo.innerHTML = `<b>Cliente:</b> ${pedido.idCliente}`;
-  entregadoParrafo.innerHTML = `<b>Entregado:</b> ${pedido.entregado ? 'Sí' : 'No'}`;
-  fechaHoraParrafo.innerHTML = `<b>Fecha y Hora:</b> ${pedido.fechaHora.toLocaleString()}`;
-  importeParrafo.innerHTML = `<b>Importe:</b> ${pedido.importe}`;
-  productosParrafo.innerHTML = `<b>Productos:</b> ${pedido.Productos.join(', ')}`;
-  ofertasParrafo.innerHTML = `<b>Ofertas:</b> ${pedido.Ofertas.join(', ')}`;
-  menuParrafo.innerHTML = `<b>Id Menu(s):</b> ${pedido.menus.map(menu => menu.idMenu).join(', ')}`;
-
-  // Agregar elementos al contenedor
-  pedidoElement.appendChild(h3);
-  pedidoElement.appendChild(clienteParrafo);
   pedidoElement.appendChild(entregadoParrafo);
   pedidoElement.appendChild(fechaHoraParrafo);
   pedidoElement.appendChild(importeParrafo);
-  pedidoElement.appendChild(productosParrafo);
-  pedidoElement.appendChild(ofertasParrafo);
-  pedidoElement.appendChild(menuParrafo);
+
+  const btnHecho = document.createElement('button');
+  btnHecho.classList.add('btn-entregar');
+  btnHecho.textContent = 'Hecho';
+  btnHecho.addEventListener('click', function () {
+    borrarPedido(this); // Pasar el botón como argumento a la función borrarPedido
+  });
+
+  btnHecho.id = pedido.idPedido;
+  //console.log(btnHecho.id);
+  pedidoElement.appendChild(btnHecho);
 
   contenedor.appendChild(pedidoElement);
 }
-*/
 
+function borrarPedido(btn) {
+  const idPedido = parseInt(btn.id);
 
+  //buscar el pedido
+  const pedidosRef = firebase.database().ref('Pedido');
 
+  // Variable para almacenar el pedido con ID 1
+  let pedidoBorrar;
 
+  // Recorrer todos los pedidos
+  pedidosRef.once('value', function (snapshot) {
+    snapshot.forEach(function (childSnapshot) {
+      // Obtener el valor de cada pedido
+      const pedido = childSnapshot.val();
+      // Verificar si el pedido tiene ID 1
+      if (pedido.idPedido == idPedido) {
+        // Guardar el pedido con ID 1 en la variable
+        pedidoBorrar = pedido;
+      }
+    });
+  }).then(function () {
+    // Una vez completado el recorrido de los pedidos
+    if (pedidoBorrar) {
+      // Se encontró un pedido con ID 1
+      console.log('Pedido con ID 1:', pedidoBorrar);
+    } else {
+      // No se encontró ningún pedido con ID 1
+      console.log('No se encontró ningún pedido con ID 1.');
+    }
+  }).catch(function (error) {
+    // Manejar cualquier error que ocurra durante la lectura de los pedidos
+    console.error('Error al recuperar los pedidos:', error);
+  });
+
+  //restar stock productos, si es 0, dar error
+
+  //borrar el pedido
+}
 
 // Función para obtener el ID de un menú
 function obtenerMenuId(idMenu) {
@@ -464,15 +466,14 @@ function mostrarClientes(nombreFiltro, consultaBusqueda = '') {
       var clienteDiv = document.createElement('div');
       clienteDiv.className = 'cliente-div';
 
-      var contenidoCliente = '<h3>' + cliente.Nombre + '</h3>' +
-        '<p>Correo: ' + cliente.Correo + '</p>' +
-        '<p>Teléfono: ' + cliente.Telefono + '</p>' +
-        '<p>Puntos: ' + cliente.Puntos + '</p>';
+      var contenidoCliente = '<h3>' + cliente.nombre + '</h3>' +
+        '<p>Correo: ' + cliente.correo + '</p>' +
+        '<p>Puntos: ' + cliente.puntos + '</p>';
 
       var botonBanear = document.createElement('button');
       botonBanear.className = 'boton-banear';
 
-      if (cliente.Bloqueado) {
+      if (cliente.bloqueado) {
         botonBanear.textContent = 'Restablecer';
         botonBanear.style.backgroundColor = '#00cc00'; // Verde
       } else {
@@ -481,7 +482,7 @@ function mostrarClientes(nombreFiltro, consultaBusqueda = '') {
       }
 
       botonBanear.onclick = function () {
-        gestionarClientes(cliente.Correo);
+        gestionarClientes(cliente.correo);
       };
 
       clienteDiv.innerHTML = contenidoCliente;
@@ -496,19 +497,19 @@ function mostrarClientes(nombreFiltro, consultaBusqueda = '') {
             anadirProd = true;
             break;
           case 'activos':
-            if (!cliente.Bloqueado) {
+            if (!cliente.bloqueado) {
               anadirProd = true;
             }
             break;
           case 'bloqueados':
-            if (cliente.Bloqueado == true) {
+            if (cliente.bloqueado == true) {
               anadirProd = true;
             }
             break;
         }
 
       } else {
-        if (cliente.Nombre.toLowerCase().trim().includes(consultaBusqueda.toLowerCase().trim())) {
+        if (cliente.nombre.toLowerCase().trim().includes(consultaBusqueda.toLowerCase().trim())) {
           anadirProd = true;
         }
       }
@@ -938,12 +939,12 @@ function guardarProductoBBDD(producto) {
 function gestionarClientes(correoCliente) {
   var database = firebase.database();
 
-  database.ref('Cliente').orderByChild('Correo').equalTo(correoCliente).once('value', function (snapshot) {
+  database.ref('Cliente').orderByChild('correo').equalTo(correoCliente).once('value', function (snapshot) {
     snapshot.forEach(function (childSnapshot) {
       var cliente = childSnapshot.val();
-      var nuevoEstadoBloqueo = !cliente.Bloqueado;
+      var nuevoEstadoBloqueo = !cliente.bloqueado;
 
-      childSnapshot.ref.update({ Bloqueado: nuevoEstadoBloqueo }).then(function () {
+      childSnapshot.ref.update({ bloqueado: nuevoEstadoBloqueo }).then(function () {
         console.log('Estado de bloqueo actualizado correctamente para el cliente con correo electrónico:', correoCliente);
       }).catch(function (error) {
         console.error('Error al actualizar el estado de bloqueo para el cliente:', error);

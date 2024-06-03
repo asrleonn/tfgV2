@@ -63,6 +63,8 @@
 .btn-entregar {
     margin-top: 15px;
     background-color: #284a66;
+    display: flex;
+    justify-content: center;
 }
 
 .pedido-entregado {

@@ -10,6 +10,7 @@
 - campos vacíos en los formularios
 - boton borrar cuando el de añadir esté pulsado
 - pantalla de edición
+- filtrar los pedidos
  
 ## Revisar:  
 - Formulario crear ofertas
@@ -17,6 +18,7 @@
 ## Hablar:  
 - Quién quita el stock, el de la tienda al confirmar el pedido o la app al hacer el pedido?
 - que añadan el id del cliente
+- id pedidos
 
 ## Si sobra tiempo:
 - botones de uiverse.io
