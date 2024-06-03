@@ -247,87 +247,8 @@ function mostrarOfertas(nombreFiltro, consultaBusqueda = '') {
       console.error('Error al leer las ofertas:', error);
     });
 }
-/*
-function mostrarPedidos(nombreFiltro, consultaBusqueda = '') {
-  const pedidosRef = firebase.database().ref('Pedido');
 
-  pedidosRef.once('value')
-    .then((snapshot) => {
-      const pedidos = snapshot.val();
-      const contenedorPedidos = document.getElementById('resto-seccion-pedidos');
-      contenedorPedidos.innerHTML = '';
 
-      if (pedidos) {
-        // Convertir los pedidos a un array para ordenarlos
-        const pedidosArray = Object.keys(pedidos).map(key => {
-          const pedido = pedidos[key];
-          const fechaHora = pedido.fechaHora ? new Date(
-            pedido.fechaHora.year,
-            pedido.fechaHora.monthValue - 1,
-            pedido.fechaHora.dayOfMonth,
-            pedido.fechaHora.hour,
-            pedido.fechaHora.minute,
-            pedido.fechaHora.second,
-            pedido.fechaHora.nano / 1000000
-          ) : new Date(); // Valor predeterminado si no existe fechaHora
-
-          return {
-            idPedido: key,
-            clienteId: pedido.clienteId || '',
-            entregado: pedido.entregado || false,
-            fechaHora: fechaHora,
-            importe: pedido.importe || 0,
-            Productos: Array.isArray(pedido.productos) ? pedido.productos.map(producto => producto.idProducto) : [],
-            Ofertas: Array.isArray(pedido.ofertas) ? pedido.ofertas.map(oferta => oferta.idOferta) : [],
-            menus: pedido.menus || []
-          };
-        });
-
-        // Ordenar los pedidos por fecha
-        pedidosArray.sort((a, b) => a.fechaHora - b.fechaHora);
-
-        // Mostrar cada pedido en HTML
-        pedidosArray.forEach(pedido => {
-          obtenerNombreCliente(pedido.clienteId)
-            .then(nombreCliente => {
-              pedido.nombreCliente = nombreCliente;
-
-              const promisesProductos = pedido.Productos.map(productoId => {
-                return obtenerDescripcionProducto(productoId)
-                  .then(descripcion => descripcion)
-                  .catch(error => {
-                    console.error('Error al obtener la descripción del producto:', error);
-                  });
-              });
-
-              const promisesOfertas = pedido.Ofertas.map(ofertaId => {
-                return obtenerNombreOferta(ofertaId)
-                  .then(nombre => nombre)
-                  .catch(error => {
-                    console.error('Error al obtener el nombre de la oferta:', error);
-                  });
-              });
-
-              Promise.all([...promisesProductos, ...promisesOfertas])
-                .then(descripciones => {
-                  pedido.Productos = descripciones.slice(0, pedido.Productos.length);
-                  pedido.Ofertas = descripciones.slice(pedido.Productos.length);
-
-                  mostrarPedidoEnHTML(pedido, contenedorPedidos);
-                });
-            })
-            .catch(error => {
-              console.error('Error al obtener el nombre del cliente:', error);
-            });
-        });
-      } else {
-        console.log('No hay pedidos disponibles.');
-      }
-    })
-    .catch((error) => {
-      console.error('Error al leer los pedidos:', error);
-    });
-}*/
 
 
 function mostrarPedidos(nombreFiltro, consultaBusqueda = '') {
@@ -340,7 +261,7 @@ function mostrarPedidos(nombreFiltro, consultaBusqueda = '') {
       contenedorPedidos.innerHTML = '';
 
       if (pedidos) {
-        // Convertir los pedidos a un array para ordenarlos
+        // Convertir los pedidos a un array para ordenarlos por fecha y hora
         const pedidosArray = Object.keys(pedidos).map(key => {
           const pedido = pedidos[key];
           const fechaHora = pedido.fechaHora ? new Date(
@@ -361,15 +282,16 @@ function mostrarPedidos(nombreFiltro, consultaBusqueda = '') {
             importe: pedido.importe || 0,
             Productos: Array.isArray(pedido.productos) ? pedido.productos.map(producto => producto.idProducto) : [],
             Ofertas: Array.isArray(pedido.ofertas) ? pedido.ofertas.map(oferta => oferta.idOferta) : [],
-            menus: pedido.menus || []
+            menus: Array.isArray(pedido.menus) ? pedido.menus : []
           };
         });
 
-        // Ordenar los pedidos por fecha
-        pedidosArray.sort((a, b) => a.fechaHora - b.fechaHora);
+        // Ordenar los pedidos por fecha y hora de manera ascendente
+        pedidosArray.sort((a, b) => a.fechaHora.getTime() - b.fechaHora.getTime());
 
         // Mostrar cada pedido en HTML
         pedidosArray.forEach(pedido => {
+          console.log(pedido.clienteId);
           obtenerNombreCliente(pedido.clienteId)
             .then(nombreCliente => {
               pedido.nombreCliente = nombreCliente;
@@ -415,74 +337,97 @@ function mostrarPedidos(nombreFiltro, consultaBusqueda = '') {
 }
 
 
-
-
-
-function mostrarPedidoEnHTML(pedidoObj, contenedor) {
+async function mostrarPedidoEnHTML(pedido, contenedor) {
+  // Crear elementos HTML
   const pedidoElement = document.createElement('div');
-  //pedidoElement.className = 'pedido cardboard'; // Agregar las clases 'pedido' y 'cardboard'
+  const h3 = document.createElement('h3');
+  const clienteParrafo = document.createElement('p');
+  const entregadoParrafo = document.createElement('p');
+  const fechaHoraParrafo = document.createElement('p');
+  const importeParrafo = document.createElement('p');
+
+  // Agregar clases a los elementos
   pedidoElement.className = 'pedido';
+  // Agregar contenido a los elementos
+  h3.innerHTML = `<b>Pedido</b>: ${pedido.idPedido}`;
+  clienteParrafo.innerHTML = `<b>Cliente:</b> ${pedido.clienteId}`;
+  
+  const nombreCliente = await obtenerNombreCliente(pedido.clienteId);
+    console.log(nombreCliente);
+  entregadoParrafo.innerHTML = `<b>Entregado:</b> ${pedido.entregado ? 'Sí' : 'No'}`;
+  fechaHoraParrafo.innerHTML = `<b>Fecha y Hora:</b> ${pedido.fechaHora.toLocaleString()}`;
+  importeParrafo.innerHTML = `<b>Importe:</b> ${pedido.importe.toFixed(2)}`;
 
-  const pedidoId = document.createElement('h3');
-  pedidoId.className = 'pedido-id';
-  pedidoId.textContent = pedidoObj.idPedido;
+  // Agregar elementos al contenedor
+  pedidoElement.appendChild(h3);
+  //pedidoElement.appendChild(clienteParrafo);
+  pedidoElement.appendChild(entregadoParrafo);
+  pedidoElement.appendChild(fechaHoraParrafo);
+  pedidoElement.appendChild(importeParrafo);
 
-  const clienteInfo = document.createElement('p');
-  clienteInfo.className = 'cliente';
-  clienteInfo.textContent = `Cliente: ${pedidoObj.nombreCliente}`;
-
-  const fechaInfo = document.createElement('p');
-  fechaInfo.className = 'fecha';
-  fechaInfo.textContent = `Fecha: ${pedidoObj.fechaHora.toLocaleString()}`;
-
-  const importeInfo = document.createElement('p');
-  importeInfo.className = 'importe';
-  importeInfo.textContent = `Importe: $${pedidoObj.importe.toFixed(2)}`;
-
-  const productosInfo = document.createElement('p');
-  productosInfo.className = 'productos';
-  if (pedidoObj.Productos.length > 0) {
-    productosInfo.textContent = `Productos: ${pedidoObj.Productos.join(', ')}`;
+  // Condicionalmente agregar párrafos para productos, ofertas y menús
+  if (pedido.Productos.length > 0) {
+    const productosParrafo = document.createElement('p');
+    productosParrafo.innerHTML = `<b>Productos:</b> ${pedido.Productos.join(', ')}`;
+    pedidoElement.appendChild(productosParrafo);
   }
 
-  const ofertasInfo = document.createElement('p');
-  ofertasInfo.className = 'ofertas';
-  if (pedidoObj.Ofertas.length > 0) {
-    ofertasInfo.textContent = `Ofertas: ${pedidoObj.Ofertas.join(', ')}`;
+  if (pedido.Ofertas.length > 0) {
+    const ofertasParrafo = document.createElement('p');
+    ofertasParrafo.innerHTML = `<b>Ofertas:</b> ${pedido.Ofertas.join(', ')}`;
+    pedidoElement.appendChild(ofertasParrafo);
   }
 
-  const menuInfo = document.createElement('p');
-  menuInfo.className = 'menu';
-  if (pedidoObj.menus && pedidoObj.menus.length > 0) {
-    menuInfo.textContent = `Menú ID: ${pedidoObj.menus[0].idMenu}`;
-  }
-
-  pedidoElement.appendChild(pedidoId);
-  pedidoElement.appendChild(clienteInfo);
-  pedidoElement.appendChild(fechaInfo);
-  pedidoElement.appendChild(importeInfo);
-  pedidoElement.appendChild(productosInfo);
-  pedidoElement.appendChild(ofertasInfo);
-  pedidoElement.appendChild(menuInfo);
-
-  // Agregar el botón de entrega después de todos los otros elementos
-  if (!pedidoObj.entregado) {
-    const entregarBtn = document.createElement('button');
-    //entregarBtn.className = 'entregar-btn';
-    entregarBtn.textContent = 'Entregar';
-    entregarBtn.classList.add('btn-entregar');
-    entregarBtn.onclick = function () {
-      entregarPedido(pedidoObj.idPedido);
-    };
-    pedidoElement.appendChild(entregarBtn);
-    pedidoElement.classList.add('pedido-entregado');
-  } else {
-    pedidoElement.classList.add('pedido-sin-entregar');
+  if (pedido.menus.length > 0) {
+    const menuParrafo = document.createElement('p');
+    menuParrafo.innerHTML = `<b>Id Menu(s):</b> ${pedido.menus.map(menu => menu.idMenu).join(', ')}`;
+    pedidoElement.appendChild(menuParrafo);
   }
 
   contenedor.appendChild(pedidoElement);
 }
 
+
+/*
+function mostrarPedidoEnHTML(pedido, contenedor) {
+  // Crear elementos HTML
+  const pedidoElement = document.createElement('div');
+  const h3 = document.createElement('h3');
+  const clienteParrafo = document.createElement('p');
+  const entregadoParrafo = document.createElement('p');
+  const fechaHoraParrafo = document.createElement('p');
+  const importeParrafo = document.createElement('p');
+  const productosParrafo = document.createElement('p');
+  const ofertasParrafo = document.createElement('p');
+  const menuParrafo = document.createElement('p');
+
+  // Agregar clases a los elementos
+  pedidoElement.className = 'pedido';
+
+  // Agregar contenido a los elementos
+  h3.innerHTML = `<b>Pedido</b>: ${pedido.idPedido}`;
+  // Mostrar solo el ID del cliente
+  clienteParrafo.innerHTML = `<b>Cliente:</b> ${pedido.idCliente}`;
+  entregadoParrafo.innerHTML = `<b>Entregado:</b> ${pedido.entregado ? 'Sí' : 'No'}`;
+  fechaHoraParrafo.innerHTML = `<b>Fecha y Hora:</b> ${pedido.fechaHora.toLocaleString()}`;
+  importeParrafo.innerHTML = `<b>Importe:</b> ${pedido.importe}`;
+  productosParrafo.innerHTML = `<b>Productos:</b> ${pedido.Productos.join(', ')}`;
+  ofertasParrafo.innerHTML = `<b>Ofertas:</b> ${pedido.Ofertas.join(', ')}`;
+  menuParrafo.innerHTML = `<b>Id Menu(s):</b> ${pedido.menus.map(menu => menu.idMenu).join(', ')}`;
+
+  // Agregar elementos al contenedor
+  pedidoElement.appendChild(h3);
+  pedidoElement.appendChild(clienteParrafo);
+  pedidoElement.appendChild(entregadoParrafo);
+  pedidoElement.appendChild(fechaHoraParrafo);
+  pedidoElement.appendChild(importeParrafo);
+  pedidoElement.appendChild(productosParrafo);
+  pedidoElement.appendChild(ofertasParrafo);
+  pedidoElement.appendChild(menuParrafo);
+
+  contenedor.appendChild(pedidoElement);
+}
+*/
 
 
 
@@ -774,21 +719,34 @@ function shouldAddOffer(oferta, nombreFiltro, consultaBusqueda) {
 }
 
 /*OBTENCIÓN DE DATOS*/
-function obtenerNombreCliente(idCliente) {
-  return firebase.database().ref('Cliente/' + idCliente).once('value')
-    .then((snapshot) => {
-      const cliente = snapshot.val();
-      if (cliente) {
-        return cliente.Nombre;
-      } else {
-        return 'Nombre no encontrado';
-      }
-    })
-    .catch((error) => {
-      console.error('Error al obtener el nombre del cliente:', error);
-      return 'Error al obtener el nombre del cliente';
-    });
+async function obtenerNombreCliente(clienteId) {
+  return new Promise((resolve, reject) => {
+    const clientesRef = firebase.database().ref('Cliente');
+
+    clientesRef.once('value')
+      .then((snapshot) => {
+        const clientes = snapshot.val();
+
+        if (clientes) {
+          for (let i = 0; i < clientes.length; i++) {
+            const cliente = clientes[i];
+            if (cliente && cliente.idCliente === clienteId) {
+              resolve(cliente.nombre);
+              return; // Detener el bucle una vez que se encuentra el cliente
+            }
+          }
+        }
+
+        // Si no se encuentra el cliente, resolver con cadena vacía
+        resolve('');
+      })
+      .catch((error) => {
+        // En caso de error, rechazar la promesa con el error
+        console.log('nombre de cliente no encontrado');
+      });
+  });
 }
+
 
 function obtenerDescripcionProducto(productoId) {
   const productosRef = firebase.database().ref('Producto');

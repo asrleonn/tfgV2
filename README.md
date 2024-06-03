@@ -16,6 +16,7 @@
 
 ## Hablar:  
 - Quién quita el stock, el de la tienda al confirmar el pedido o la app al hacer el pedido?
+- que añadan el id del cliente
 
 ## Si sobra tiempo:
 - botones de uiverse.io

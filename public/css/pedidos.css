@@ -11,7 +11,7 @@
     min-width: 200px;
     /* Mínimo ancho */
     box-sizing: border-box;
-    text-align: center;
+    /*text-align: center;*/
     flex: 1 1 calc(25% - 20px);
     /* Para permitir ajuste en filas */
     margin: 10px;
@@ -57,7 +57,7 @@
 
 .pedido p {
     margin: 5px 0;
-    color: #5d4037;
+    color: black;
 }
 
 .btn-entregar {

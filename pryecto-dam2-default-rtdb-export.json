@@ -1,13 +1,53 @@
 {
   "Cliente": [
     {
-      "Bloqueado": false,
-      "Contraseña": "yz/g449HXXeSlnpBF9bNtHEJpaK0dM7VonPNqEV5UszvDcxbzjFy2CYakv+dG3wh8cgJrwU+dKvIyuVsBjJ7Lxwlsh/3r+Xi9+S6bwbuiKk=",
-      "Correo": "juan@example.com",
-      "IdCliente": 0,
-      "Nombre": "Juanaaa",
-      "Puntos": 679,
-      "Telefono": "123456789"
+      "bloqueado": false,
+      "contraseña": "yz/g449HXXeSlnpBF9bNtHEJpaK0dM7VonPNqEV5UszvDcxbzjFy2CYakv+dG3wh8cgJrwU+dKvIyuVsBjJ7Lxwlsh/3r+Xi9+S6bwbuiKk=",
+      "correo": "juan@example.com",
+      "idCliente": 0,
+      "nombre": "Juanaaaggg",
+      "puntos": 179
+    },
+    null,
+    {
+      "bloqueado": false,
+      "contraseña": "JKNLCcPSyaSitrUl5okLYpoCUBLKy6YA+txrUv4jiaIawUBhA8ICgAw1Ag5pcE4iG/rY4c1uruLHNnQRATfpihwlsh/3r+Xi9+S6bwbuiKk=",
+      "correo": "ss",
+      "idCliente": 2,
+      "nombre": "aa",
+      "puntos": 0
+    },
+    {
+      "bloqueado": false,
+      "contraseña": "oenEradphI2yKoXFqovuFSxAhHlX+9szCie0L/xdUwH7eyTkg+pmEFZ+ReGgXj/cAzb3MSnAf3cTEMpx7miI0xwlsh/3r+Xi9+S6bwbuiKk=",
+      "correo": "qq",
+      "idCliente": 3,
+      "nombre": "qq",
+      "puntos": 0
+    },
+    {
+      "bloqueado": false,
+      "contraseña": "SlGQKMvdVcVMNarjFzRekfHLUX6sjqUQxnQRJ5qO3+WbeIVfm+ImrOYuf25c3oL2h4vxhfalpSxbG3dmwiDfZRwlsh/3r+Xi9+S6bwbuiKk=",
+      "correo": "11",
+      "idCliente": 4,
+      "nombre": "12",
+      "puntos": 0
+    },
+    {
+      "bloqueado": false,
+      "contraseña": "Dp/xS6No74wVWKqHzx7nFCNKRVY8scqnAX/xtG4x0G/tR/sfPiDaUk9G7SJO4XyGm9wl3WpntM5XsUWLso1/dxwlsh/3r+Xi9+S6bwbuiKk=",
+      "correo": "aaa",
+      "idCliente": 5,
+      "nombre": "aaa",
+      "puntos": 0
+    },
+    {
+      "bloqueado": false,
+      "contraseña": "d0NL7GSBLFTDJnRz/IwSa9sS85h90/Cxnoblb1Qiqy2RfBsU8abXwFbYDdyUg6LY4PAy0GX3JcPrq2rRJF3dShwlsh/3r+Xi9+S6bwbuiKk=",
+      "correo": "aaaa",
+      "idCliente": 6,
+      "nombre": "aaa",
+      "puntos": 0
     }
   ],
   "Cupon": [
@@ -69,9 +109,81 @@
       "formattedValue": "8.99€"
     },
     {
-      "Canjeado": false,
+      "Canjeado": true,
       "IdCliente": 1,
       "IdCupon": 8,
+      "Puntos": 500,
+      "Valor": 3.99,
+      "formattedValue": "3.99€"
+    },
+    {
+      "Canjeado": false,
+      "IdCliente": 0,
+      "IdCupon": 9,
+      "Puntos": 500,
+      "Valor": 3.99,
+      "formattedValue": "3.99€"
+    },
+    {
+      "Canjeado": false,
+      "IdCliente": 0,
+      "IdCupon": 10,
+      "Puntos": 500,
+      "Valor": 3.99,
+      "formattedValue": "3.99€"
+    },
+    {
+      "Canjeado": true,
+      "IdCliente": 0,
+      "IdCupon": 11,
+      "Puntos": 500,
+      "Valor": 3.99,
+      "formattedValue": "3.99€"
+    },
+    {
+      "Canjeado": false,
+      "IdCliente": 0,
+      "IdCupon": 12,
+      "Puntos": 500,
+      "Valor": 3.99,
+      "formattedValue": "3.99€"
+    },
+    {
+      "Canjeado": false,
+      "IdCliente": 0,
+      "IdCupon": 13,
+      "Puntos": 500,
+      "Valor": 3.99,
+      "formattedValue": "3.99€"
+    },
+    {
+      "Canjeado": false,
+      "IdCliente": 0,
+      "IdCupon": 14,
+      "Puntos": 500,
+      "Valor": 3.99,
+      "formattedValue": "3.99€"
+    },
+    {
+      "Canjeado": false,
+      "IdCliente": 0,
+      "IdCupon": 15,
+      "Puntos": 500,
+      "Valor": 3.99,
+      "formattedValue": "3.99€"
+    },
+    {
+      "Canjeado": false,
+      "IdCliente": 0,
+      "IdCupon": 16,
+      "Puntos": 500,
+      "Valor": 3.99,
+      "formattedValue": "3.99€"
+    },
+    {
+      "Canjeado": false,
+      "IdCliente": 0,
+      "IdCupon": 17,
       "Puntos": 500,
       "Valor": 3.99,
       "formattedValue": "3.99€"
@@ -103,46 +215,37 @@
     }
   ],
   "Pedido": [
+    null,
     {
-      "Ofertas": [
-        {
-          "IdOferta": 0
-        }
-      ],
-      "Productos": [
-        {
-          "IdProducto": 1
-        },
-        {
-          "IdProducto": 2
-        }
-      ],
-      "clienteId": 1,
-      "entregado": true,
+      "clienteId": 0,
+      "entregado": false,
       "fechaHora": {
         "chronology": {
           "calendarType": "iso8601",
           "id": "ISO"
         },
-        "dayOfMonth": 11,
-        "dayOfWeek": "SATURDAY",
-        "dayOfYear": 132,
-        "hour": 9,
-        "minute": 22,
-        "month": "MAY",
-        "monthValue": 5,
-        "nano": 521011000,
-        "second": 31,
+        "dayOfMonth": 2,
+        "dayOfWeek": "SUNDAY",
+        "dayOfYear": 154,
+        "hour": 21,
+        "minute": 15,
+        "month": "JUNE",
+        "monthValue": 6,
+        "nano": 635785000,
+        "second": 50,
         "year": 2024
       },
-      "idPedido": 10,
-      "importe": 10.1
-    },
-    {
-      "clienteId": 0,
-      "entregado": false,
       "idPedido": 0,
-      "importe": 16.46,
+      "importe": 40.001000000000005,
+      "menus": [
+        {
+          "idBebida": 13,
+          "idComplemento": 7,
+          "idEntrante": 1,
+          "idMenu": 692,
+          "precioMenu": 17.541000000000004
+        }
+      ],
       "ofertas": [
         {
           "activada": true,
@@ -186,102 +289,130 @@
       ],
       "productos": [
         {
-          "descripcion": "Flan casero",
-          "idProducto": 5,
-          "ingredientes": "Leche, huevos, azúcar y caramelo",
-          "precio": 4.99,
-          "rutaImagen": "https://cdn0.recetasgratis.net/es/posts/0/4/3/flan_napolitano_15340_600.jpg",
-          "stock": 30,
-          "tipo": "postre"
-        }
-      ],
-      "productosId": [
-        5
-      ]
-    },
-    {
-      "clienteId": 0,
-      "entregado": false,
-      "idPedido": 0,
-      "importe": 16.432000000000002,
-      "menus": [
+          "descripcion": "Refresco de cola",
+          "idProducto": 3,
+          "ingredientes": "Agua carbonatada, azúcar y extracto de cola",
+          "precio": 1.99,
+          "rutaImagen": "https://www.encopadebalon.com/3493-large_default/coca-cola-lata-33cl-caja-24unid.jpg",
+          "stock": 150,
+          "tipo": "bebida"
+        },
         {
-          "idBebida": 3,
-          "idComplemento": 2,
-          "idEntrante": 1,
-          "idMenu": 1359,
-          "precioMenu": 13.932
-        }
-      ],
-      "productos": [
-        {
-          "descripcion": "Papas fritas",
-          "idProducto": 2,
-          "ingredientes": "Papas cortadas en tiras y fritas",
+          "descripcion": "Café",
+          "idProducto": 12,
+          "ingredientes": "Café molido, agua",
           "precio": 2.5,
-          "rutaImagen": "https://www.mardequel.com/12-product_medium_default/patatas-fritas-38.jpg",
-          "stock": 0,
+          "rutaImagen": "https://media.istockphoto.com/id/163939725/es/foto/taza-de-caf%C3%A9.jpg?s=612x612&w=0&k=20&c=Kq7jtc3LaDbM-X_sQ2QE-4f2xUUeqMpO5rIN4QjuPgI=",
+          "stock": 100,
+          "tipo": "bebida"
+        },
+        {
+          "descripcion": "Ensalada César",
+          "idProducto": 7,
+          "ingredientes": "Lechuga romana, pollo a la parrilla, queso parmesano, crutones y aderezo César",
+          "precio": 6.5,
+          "rutaImagen": "https://previews.123rf.com/images/nitr/nitr1105/nitr110500019/9574604-ensalada-c%C3%A9sar-sobre-fondo-blanco.jpg",
+          "stock": 40,
           "tipo": "acompañamiento"
         }
       ],
       "productosId": [
-        2
+        3,
+        12,
+        7
       ]
     },
     {
       "clienteId": 0,
       "entregado": false,
+      "fechaHora": {
+        "chronology": {
+          "calendarType": "iso8601",
+          "id": "ISO"
+        },
+        "dayOfMonth": 2,
+        "dayOfWeek": "SUNDAY",
+        "dayOfYear": 154,
+        "hour": 12,
+        "minute": 48,
+        "month": "JUNE",
+        "monthValue": 6,
+        "nano": 248121000,
+        "second": 48,
+        "year": 2024
+      },
       "idPedido": 0,
-      "importe": 25.402,
+      "importe": 9.942,
       "menus": [
         {
           "idBebida": 3,
           "idComplemento": 2,
           "idEntrante": 1,
-          "idMenu": 7764,
+          "idMenu": 5363,
+          "precioMenu": 13.932
+        }
+      ]
+    },
+    {
+      "clienteId": 0,
+      "entregado": false,
+      "fechaHora": {
+        "dayOfMonth": 2,
+        "hour": 11,
+        "minute": 43,
+        "monthValue": 6,
+        "nano": 303964000,
+        "second": 8,
+        "year": 2024
+      },
+      "idPedido": 3,
+      "importe": 13.932,
+      "menus": [
+        {
+          "idBebida": 3,
+          "idComplemento": 2,
+          "idEntrante": 1,
+          "idMenu": 9455,
+          "precioMenu": 13.932
+        }
+      ]
+    },
+    {
+      "clienteId": 0,
+      "entregado": false,
+      "fechaHora": {
+        "dayOfMonth": 2,
+        "hour": 22,
+        "minute": 50,
+        "monthValue": 6,
+        "nano": 371846000,
+        "second": 5,
+        "year": 2024
+      },
+      "idPedido": 4,
+      "importe": 10.932,
+      "menus": [
+        {
+          "idBebida": 3,
+          "idComplemento": 2,
+          "idEntrante": 1,
+          "idMenu": 6434,
           "precioMenu": 13.932
         }
       ],
-      "ofertas": [
+      "productos": [
         {
-          "activada": true,
-          "condiciones": [
-            "Condición 1",
-            "Condición 2"
-          ],
-          "descuento": 0.15,
-          "idOferta": 0,
-          "nombre": "Brasa Crispy",
-          "precio": 11.47,
-          "productos": [
-            {
-              "descripcion": "Pollo a la brasa",
-              "idProducto": 1,
-              "ingredientes": "Pollo asado con hierbas y especias",
-              "precio": 10.99,
-              "rutaImagen": "https://img.freepik.com/fotos-premium/pollo-asado-navideno-especias-hierbas-sobre-fondo-blanco-madera-espacio-copiar-concepto-comida-navidena_652855-751.jpg?w=1380",
-              "stock": 100,
-              "tipo": "comida principal"
-            },
-            {
-              "descripcion": "Papas fritas",
-              "idProducto": 2,
-              "ingredientes": "Papas cortadas en tiras y fritas",
-              "precio": 2.5,
-              "rutaImagen": "https://www.mardequel.com/12-product_medium_default/patatas-fritas-38.jpg",
-              "stock": 0,
-              "tipo": "acompañamiento"
-            }
-          ],
-          "productosId": [
-            1,
-            2
-          ],
-          "rutaImagenOferta": "https://previews.123rf.com/images/magone/magone1311/magone131100027/23389096-pollo-a-la-parrilla-y-papas-fritas-franc%C3%A9s-en-la-placa-blanca.jpg"
+          "descripcion": "Agua mineral",
+          "idProducto": 8,
+          "ingredientes": "Agua purificada",
+          "precio": 0.99,
+          "rutaImagen": "https://i.pinimg.com/736x/c1/72/de/c172de4175d336ee5d4655a1d63a365e.jpg",
+          "stock": 120,
+          "tipo": "bebida"
         }
       ],
-      "ofertasId": [
-        0
+      "productosId": [
+        8
       ]
     }
   ],
@@ -411,22 +542,6 @@
       "RutaImagen": "https://t1.uc.ltmcdn.com/es/posts/1/2/5/como_hacer_batido_de_fresa_7521_orig.jpg",
       "Stock": 50,
       "Tipo": "bebida"
-    }
-  ],
-  "Usuario": [
-    {
-      "Contraseña": "\"admin\"",
-      "EsAdmin": true,
-      "IdUsuario": 0,
-      "Nombre": "\"admin\"",
-      "Usuario": "\"usuario admin\""
-    },
-    {
-      "Contraseña": "contraseña2",
-      "EsAdmin": false,
-      "Id": 2,
-      "Nombre": "Empleado",
-      "Usuario": "usuario2"
     }
   ]
 }
