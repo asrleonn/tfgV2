@@ -397,42 +397,168 @@ async function mostrarPedidoEnHTML(pedido, contenedor) {
 }
 
 function borrarPedido(btn) {
+
   const idPedido = parseInt(btn.id);
-
-  //buscar el pedido
   const pedidosRef = firebase.database().ref('Pedido');
-
-  // Variable para almacenar el pedido con ID 1
   let pedidoBorrar;
+  const ids = [];
 
-  // Recorrer todos los pedidos
+  //obtener el pedido
   pedidosRef.once('value', function (snapshot) {
     snapshot.forEach(function (childSnapshot) {
-      // Obtener el valor de cada pedido
       const pedido = childSnapshot.val();
-      // Verificar si el pedido tiene ID 1
       if (pedido.idPedido == idPedido) {
-        // Guardar el pedido con ID 1 en la variable
         pedidoBorrar = pedido;
       }
     });
   }).then(function () {
-    // Una vez completado el recorrido de los pedidos
     if (pedidoBorrar) {
-      // Se encontró un pedido con ID 1
-      console.log('Pedido con ID 1:', pedidoBorrar);
+      console.log('Pedido con ID:', pedidoBorrar);
+      /**/
+
+      // Agregar IDs de productos
+      if (pedidoBorrar.productos) {
+        pedidoBorrar.productos.forEach(producto => {
+          ids.push(producto.idProducto);
+        });
+      }
+
+      // Agregar IDs de menús
+      if (pedidoBorrar.menus) {
+        pedidoBorrar.menus.forEach(menu => {
+          ids.push(menu.idBebida, menu.idComplemento, menu.idEntrante);
+        });
+      }
+
+      // Agregar IDs de ofertas y sus productos
+      if (pedidoBorrar.ofertas) {
+        pedidoBorrar.ofertas.forEach(oferta => {
+          if (oferta.productosId) {
+            ids.push(...oferta.productosId);
+          }
+        });
+      }
+
+      console.log('IDs del pedido:', ids);
+
+
+      let stockInsuficiente = false;
+
+      // Mapear todas las promesas de verificación de stock
+      const promesasStock = ids.map(id => verificarStock(id));
+
+      // Esperar a que todas las promesas se resuelvan
+      Promise.all(promesasStock)
+        .then(resultados => {
+          // Verificar cada resultado
+          resultados.forEach((stockDisponible, index) => {
+            const id = ids[index];
+            if (stockDisponible) {
+              console.log(`Producto ID: ${id}, Stock Disponible: ${stockDisponible}`);
+            } else {
+              console.log(`Producto ID: ${id}, Stock Agotado`);
+              alert(`Stock insuficiente en el producto con ID ${id}`);
+              stockInsuficiente = true;
+            }
+          });
+
+          // Si hay stock insuficiente, salir de la función
+          if (stockInsuficiente) {
+            return; // Salir de la función
+          }
+
+          //a esta parte solo se pasa si los productos tienen stock
+
+
+          console.log('pasa');
+
+          ids.forEach(id => {
+            restarStockEnBD(id);
+          });
+
+
+        })
+
+
+
+
+      /*ids.forEach(id => {
+        verificarStock(id).then(stockDisponible => {
+          if (stockDisponible) {
+            console.log(`Producto ID: ${id}, Stock Disponible: ${stockDisponible}`);
+          } else {
+            console.log(`Producto ID: ${id}, Stock Agotado`);
+            alert(`stock insuficiente en el producto con id ${id}`);
+            return
+          }
+        });
+      });
+      
+      console.log('pasa');*/
+
+      /**/
     } else {
-      // No se encontró ningún pedido con ID 1
-      console.log('No se encontró ningún pedido con ID 1.');
+      console.log('No se encontró ningún pedido con ID asociado.');
     }
   }).catch(function (error) {
-    // Manejar cualquier error que ocurra durante la lectura de los pedidos
     console.error('Error al recuperar los pedidos:', error);
   });
 
-  //restar stock productos, si es 0, dar error
+  //obtener los productos del pedido
 
-  //borrar el pedido
+}
+
+
+
+function restarStockEnBD(idProducto) {
+  const productosRef = firebase.database().ref('Producto');
+
+  return productosRef.once('value')
+    .then(function(snapshot) {
+      const productos = snapshot.val();
+      for (const producto of Object.values(productos)) {
+        if (producto.idProducto === idProducto) {
+          if (producto.Stock && producto.Stock > 0) {
+            const nuevoStock = producto.Stock - 1;
+            return firebase.database().ref('Producto').child(producto.IdProducto).update({ Stock: nuevoStock });
+          } else {
+            console.log('El producto con ID', idProducto, 'no tiene stock disponible.');
+            return null;
+          }
+        }
+      }
+      console.log('No se encontró ningún producto con ID', idProducto);
+      return null;
+    })
+    .then(function() {
+      console.log('Stock restado con éxito para el producto con ID:', idProducto);
+    })
+    .catch(function(error) {
+      console.error('Error al restar el stock del producto con ID:', idProducto, error);
+    });
+}
+
+
+
+
+//verificar stock de un producto
+function verificarStock(idProducto) {
+
+  const productosRef = firebase.database().ref('Producto');
+
+  return productosRef.child(idProducto).once('value')
+    .then(function (snapshot) {
+      const producto = snapshot.val();
+      if (producto && producto.Stock > 0) {
+        return true;
+      } else {
+        return false;
+      }
+    })
+    .catch(function (error) {
+      console.error('Error al verificar el stock:', error);
+      return false; // En caso de error, retornamos false
+    });
 }
 
 // Función para obtener el ID de un menú
