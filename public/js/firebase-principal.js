@@ -40,6 +40,7 @@ function mostrarTodo(booleanArg) {
       elements[i].style.display = 'none';
     }
   }
+
 }
 
 /*SIDEBAR*/
