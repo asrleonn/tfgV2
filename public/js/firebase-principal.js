@@ -472,10 +472,28 @@ function borrarPedido(btn) {
 
           console.log('pasa');
 
-          ids.forEach(id => {
+          /*ids.forEach(id => {
             restarStockEnBD(id);
           });
 
+          console.log('borrar el pedido de la bbdd');*/
+
+          /*Promise.all(ids.map(id => restarStockEnBD(id))).then(() => {
+            console.log('borrar el pedido de la bbdd');
+            // código para borrar el pedido de la bbdd
+
+          });*/
+          Promise.all(ids.map(id => restarStockEnBD(id))).then(() => {
+            console.log('borrar el pedido de la bbdd');
+            pedidosRef.child(pedidoBorrar.idPedido.toString()).remove()
+              .then(() => {
+                console.log('Pedido borrado con éxito');
+                mostrarPedidos('todos');
+              })
+              .catch((error) => {
+                console.error('Error al borrar el pedido:', error);
+              });
+          });
 
         })
 

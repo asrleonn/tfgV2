@@ -10,14 +10,12 @@
 - campos vacíos en los formularios
 - boton borrar cuando el de añadir esté pulsado
 - pantalla de edición
-- filtrar los pedidos
 - si el stock es 1 pero se ha pedido 2 veces..
  
 ## Revisar:  
 - Formulario crear ofertas
 
 ## Hablar:  
-- Quién quita el stock, el de la tienda al confirmar el pedido o la app al hacer el pedido?
 - que añadan el id del cliente
 - id pedidos
 
