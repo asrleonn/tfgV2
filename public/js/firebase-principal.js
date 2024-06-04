@@ -84,6 +84,10 @@ document.addEventListener('DOMContentLoaded', () => {
           mostrarClientes('todos');
           setUpBarraBusqueda('clientes');
           break;
+        case 'inventario':
+          console.log('inventario');
+          setUpStockProductos();
+          break;
       }
     });
   });
@@ -101,6 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 });
+
 
 /*FUNCIONES MOSTRAR*/
 function mostrarProductos(nombreFiltro, consultaBusqueda = '') {
@@ -134,6 +139,10 @@ function mostrarProductos(nombreFiltro, consultaBusqueda = '') {
           const descripcion = document.createElement('h2');
           descripcion.textContent = producto.Descripcion;
           productoDiv.appendChild(descripcion);
+
+          const idProducto = document.createElement('p');
+          idProducto.textContent = `Id producto: ${producto.IdProducto}`;
+          productoDiv.appendChild(idProducto);
 
           const ingredientes = document.createElement('p');
           ingredientes.textContent = `Ingredientes: ${producto.Ingredientes}`;
@@ -511,7 +520,7 @@ function restarStockEnBD(idProducto) {
   const productosRef = firebase.database().ref('Producto');
 
   return productosRef.once('value')
-    .then(function(snapshot) {
+    .then(function (snapshot) {
       const productos = snapshot.val();
       for (const producto of productos) {
         if (producto.IdProducto === idProducto) {
@@ -527,14 +536,94 @@ function restarStockEnBD(idProducto) {
       console.log('No se encontró ningún producto con ID', idProducto);
       return null;
     })
-    .then(function() {
+    .then(function () {
       console.log('Stock restado con éxito para el producto con ID:', idProducto);
     })
-    .catch(function(error) {
+    .catch(function (error) {
       console.error('Error al restar el stock del producto con ID:', idProducto, error);
     });
 }
 
+
+function setUpStockProductos() {
+  var btnBuscar = document.getElementById('frmStock-boton-buscar');
+  var btnActualizar = document.getElementById('frmStock-boton-actualizar');
+  const productosRef = firebase.database().ref('Producto');
+  let productoElegido;
+  var boolEncontrado = false;
+
+  btnActualizar.onclick = function () {
+    var inputActualizar = document.getElementById('frmStock-input-actualizar').value;
+    var idPedido = parseInt(document.getElementById('frmStock-id-pedido').value);
+    var nuevoStock = parseInt(inputActualizar);
+
+    if (isNaN(idPedido) || isNaN(nuevoStock)) {
+      console.log("Uno o ambos campos no contienen un número");
+    } else {
+      console.log("Ambos campos contienen un número"); // si los dos campos son un numero
+
+      // Buscar el producto con el idPedido
+      productosRef.once('value')
+        .then(function (snapshot) {
+          const productos = snapshot.val();
+          for (const producto of productos) {
+            if (producto.IdProducto == idPedido) {
+              // Actualizar el stock del producto
+              producto.Stock = nuevoStock;
+              productosRef.child(producto.IdProducto).update({ Stock: nuevoStock });
+              console.log('Stock actualizado correctamente');
+
+              // Vaciar los inputs
+              document.getElementById('frmStock-id-pedido').value = '';
+              document.getElementById('frmStock-input-actualizar').value = '';
+
+              break;
+            }
+          }
+        })
+        .catch(function (error) {
+          console.error('Error al actualizar el stock del producto con ID:', idPedido, error);
+        });
+    }
+  };
+
+  btnBuscar.onclick = function () {
+    var inputBuscar = document.getElementById('frmStock-id-pedido').value;
+    console.log('contenido de busqueda: ' + inputBuscar);
+
+    if (isNaN(inputBuscar)) {
+      alert("El campo de búsqueda debe ser un número");
+      return;
+    }
+
+    //buscar producto en la bbdd
+    return productosRef.once('value')
+      .then(function (snapshot) {
+        const productos = snapshot.val();
+        for (const producto of productos) {
+          if (producto.IdProducto == parseInt(inputBuscar)) {
+            productoElegido = producto;
+            boolEncontrado = true;
+            console.log('el prod es: ' + producto.Descripcion);
+          }
+        }
+        return null;
+      })
+      .then(function () {
+        console.log('hecho');
+        if (boolEncontrado) { //si se encuentra el producto
+          console.log('encontrado');
+          document.getElementById('frmStock-input-actualizar').value = productoElegido.Stock;
+
+        } else {
+          console.log('no encontrado');
+        }
+      })
+      .catch(function (error) {
+        console.error('Error al restar el stock del producto con ID:', parseInt(inputBuscar), error);
+      });
+  };
+}
 
 
 //verificar stock de un producto
@@ -596,10 +685,10 @@ function mostrarClientes(nombreFiltro, consultaBusqueda = '') {
       botonBanear.className = 'boton-banear';
 
       if (cliente.bloqueado) {
-        botonBanear.textContent = 'Restablecer';
+        botonBanear.textContent = 'Desbloquear';
         botonBanear.style.backgroundColor = '#00cc00'; // Verde
       } else {
-        botonBanear.textContent = 'Banear';
+        botonBanear.textContent = 'Bloquear';
         botonBanear.style.backgroundColor = '#ff3333'; // Rojo
       }
 

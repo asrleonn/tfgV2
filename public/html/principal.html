@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="../css/menu-desplegable.css">
   <link rel="stylesheet" href="../css/pedidos.css">
   <link rel="stylesheet" href="../css/cardboard-general.css">
+  <link rel="stylesheet" href="../css/frmStock.css">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
   <link rel="icon" type="image/png" href="../img/favicon.png">
@@ -70,6 +71,13 @@
           <span class="links_name">Clientes</span>
         </a>
         <span class="tooltip">Clientes</span>
+      </li>
+      <li data-content="inventario" class="soloAdmin">
+        <a href="#">
+          <img src="../img/inventario.png" class='bx bx-grid-alt imgSideBar'></img>
+          <span class="links_name">Inventario</span>
+        </a>
+        <span class="tooltip">Inventario</span>
       </li>
       <li class="profile">
         <div class="profile-details">
@@ -184,6 +192,19 @@
         </div>
         <div class="resto-seccion" id="lista-clientes">
 
+        </div>
+      </div>
+
+      <!--inventario-->
+      <div id="inventario" class="content-section" data-name="inventario" style="display: none;">
+        <div class="resto-seccion" id="lista-clientes">
+          <form>
+            <label for="frmStock-id-pedido">Stock de los productos</label>
+            <input type="text" id="frmStock-id-pedido" class="frmStock-input" placeholder="Id del producto"/>
+            <button type="button" id="frmStock-boton-buscar" class="frmStock-boton">Buscar</button>
+            <input type="text" id="frmStock-input-actualizar" class="frmStock-input" placeholder="Stock del producto"/>
+            <button type="button" id="frmStock-boton-actualizar" class="frmStock-boton">Actualizar</button>
+          </form>
         </div>
       </div>
 

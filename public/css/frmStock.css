@@ -1,0 +1,30 @@
+.frmStock-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.frmStock-label {
+    margin-right: 10px;
+}
+
+.frmStock-input {
+    margin-right: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+}
+
+.frmStock-boton {
+    margin-right: 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #284a66;
+    color: #fff;
+    cursor: pointer;
+}
+
+.frmStock-boton:hover {
+    background-color: #284a66;
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  }
