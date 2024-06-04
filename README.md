@@ -11,6 +11,7 @@
 - boton borrar cuando el de añadir esté pulsado
 - pantalla de edición
 - filtrar los pedidos
+- si el stock es 1 pero se ha pedido 2 veces..
  
 ## Revisar:  
 - Formulario crear ofertas

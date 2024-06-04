@@ -414,7 +414,7 @@ function borrarPedido(btn) {
   }).then(function () {
     if (pedidoBorrar) {
       console.log('Pedido con ID:', pedidoBorrar);
-      /**/
+
 
       // Agregar IDs de productos
       if (pedidoBorrar.productos) {
@@ -479,24 +479,6 @@ function borrarPedido(btn) {
 
         })
 
-
-
-
-      /*ids.forEach(id => {
-        verificarStock(id).then(stockDisponible => {
-          if (stockDisponible) {
-            console.log(`Producto ID: ${id}, Stock Disponible: ${stockDisponible}`);
-          } else {
-            console.log(`Producto ID: ${id}, Stock Agotado`);
-            alert(`stock insuficiente en el producto con id ${id}`);
-            return
-          }
-        });
-      });
-      
-      console.log('pasa');*/
-
-      /**/
     } else {
       console.log('No se encontró ningún pedido con ID asociado.');
     }
@@ -504,10 +486,7 @@ function borrarPedido(btn) {
     console.error('Error al recuperar los pedidos:', error);
   });
 
-  //obtener los productos del pedido
-
 }
-
 
 
 function restarStockEnBD(idProducto) {
@@ -516,11 +495,11 @@ function restarStockEnBD(idProducto) {
   return productosRef.once('value')
     .then(function(snapshot) {
       const productos = snapshot.val();
-      for (const producto of Object.values(productos)) {
-        if (producto.idProducto === idProducto) {
+      for (const producto of productos) {
+        if (producto.IdProducto === idProducto) {
           if (producto.Stock && producto.Stock > 0) {
             const nuevoStock = producto.Stock - 1;
-            return firebase.database().ref('Producto').child(producto.IdProducto).update({ Stock: nuevoStock });
+            return firebase.database().ref('Producto/' + idProducto).update({ Stock: nuevoStock });
           } else {
             console.log('El producto con ID', idProducto, 'no tiene stock disponible.');
             return null;
@@ -537,7 +516,6 @@ function restarStockEnBD(idProducto) {
       console.error('Error al restar el stock del producto con ID:', idProducto, error);
     });
 }
-
 
 
 
