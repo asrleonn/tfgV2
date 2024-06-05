@@ -881,6 +881,7 @@ function setUpAnadirProd() {
       var selectTipo = document.createElement('select');
       selectTipo.name = 'tipo';
       selectTipo.required = true;
+      selectTipo.id = 'select-producto';
 
       tiposComida.forEach(function (tipo) {
         var option = document.createElement('option');
@@ -962,13 +963,6 @@ function obtenerTiposComida() {
   });
 }
 
-
-
-
-
-
-
-
 function getMaxIdProducto(callback) {
   const productosRef = firebase.database().ref('Producto');
   let maxIdProducto = 0;
@@ -1029,99 +1023,185 @@ function guardarProductoBBDD(producto) {
 
 
 
+
 function setUpAnadirOferta() {
   var btn = document.getElementById('btMasOf');
   btn.onclick = function () {
-    var barraBusqueda = document.getElementById('search-container-ofertas');
-    var dropdown = document.getElementById('dropdown-ofertas');
-    var restoSeccion = document.getElementById('resto-seccion-ofertas');
+    obtenerDescripcionesProductos().then(function (descripciones) {
+      console.log('productos:', descripciones);
 
-    barraBusqueda.style.display = 'none';
-    dropdown.style.display = 'none';
-    restoSeccion.innerHTML = '';
+      var barraBusqueda = document.getElementById('search-container-ofertas');
+      var dropdown = document.getElementById('dropdown-ofertas');
+      var restoSeccion = document.getElementById('resto-seccion-ofertas');
 
-    const modalContainer = document.createElement('div');
-    modalContainer.className = 'modal-container';
-
-    const form = document.createElement('form');
-    form.id = 'oferta-form';
-
-    const campos = [
-      { label: 'Nombre', name: 'nombre', type: 'text' },
-      { label: 'Descuento', name: 'descuento', type: 'number' },
-      { label: 'Productos (IDs separados por espacios)', name: 'productos', type: 'text' },
-      { label: 'Imagen de la Oferta (URL)', name: 'imagen', type: 'url' },
-      { label: 'Activada', name: 'activada', type: 'checkbox', required: false },
-      { label: 'Condiciones', name: 'condiciones', type: 'text' },
-      { label: 'IdOferta', name: 'idOferta', type: 'number' },
-      { label: 'MenusId (IDs separados por espacios)', name: 'menusId', type: 'text' },
-      { label: 'OfertasId (IDs separados por espacios)', name: 'ofertasId', type: 'text' },
-      { label: 'ProductosId (IDs separados por espacios)', name: 'productosId', type: 'text' },
-    ];
-
-    campos.forEach(function (campo) {
-      const label = document.createElement('label');
-      label.textContent = campo.label;
-
-      const input = document.createElement('input');
-      input.type = campo.type;
-      input.name = campo.name;
-      input.required = true;
-
-      form.appendChild(label);
-      form.appendChild(input);
-    });
-
-    const btnEnviar = document.createElement('button');
-    btnEnviar.type = 'submit';
-    btnEnviar.textContent = 'Enviar';
-    btnEnviar.classList.add('btnEnviar');
-
-    const btnCancelar = document.createElement('button');
-    btnCancelar.type = 'button';
-    btnCancelar.textContent = 'Cancelar';
-    btnCancelar.classList.add('btnCancelar');
-    btnCancelar.addEventListener('click', function () {
-      barraBusqueda.style.display = '';
-      dropdown.style.display = '';
+      barraBusqueda.style.display = 'none';
+      dropdown.style.display = 'none';
       restoSeccion.innerHTML = '';
-      mostrarBarraBusquedaOferta();
-      return
+
+      var modalContainer = document.createElement('div');
+      modalContainer.className = 'modal-container';
+
+      var form = document.createElement('form');
+      form.id = 'oferta-form';
+
+      var campos = [
+        { label: 'Nombre', name: 'nombre', type: 'text' },
+        { label: 'Descuento', name: 'descuento', type: 'text' },
+        { label: 'Productos (selección múltiple)', name: 'productos', type: 'select', multiple: true },
+        { label: 'Imagen de la Oferta (URL)', name: 'imagen', type: 'url' },
+        { label: 'Estado de la oferta', name: 'activada', type: 'select' }
+      ];
+
+      campos.forEach(function (campo) {
+        var label = document.createElement('label');
+        label.textContent = campo.label;
+
+        if (campo.type === 'select') {
+          var select = document.createElement('select');
+          select.name = campo.name;
+          //select.size = 1;
+          if (campo.multiple) {
+            select.multiple = true;
+          }
+
+          if (campo.name === 'productos') {
+            select.size = 7;
+            select.id = 'select-seleccion-producto';
+            descripciones.forEach(function (descripcion) {
+              var option = document.createElement('option');
+              option.value = descripcion;
+              option.text = descripcion;
+              select.appendChild(option);
+            });
+          } else if (campo.name === 'activada') {
+            select.size = 1;//
+            select.id = 'select-estado-oferta';
+            var optionActivada = document.createElement('option');
+            optionActivada.value = 'true';
+            optionActivada.text = 'Activada';
+            select.appendChild(optionActivada);
+
+            var optionDesactivada = document.createElement('option');
+            optionDesactivada.value = 'false';
+            optionDesactivada.text = 'Desactivada';
+            select.appendChild(optionDesactivada);
+          }
+
+          form.appendChild(label);
+          form.appendChild(select);
+        } else {
+          form.appendChild(label);
+
+          var input = document.createElement('input');
+          input.type = campo.type;
+          input.name = campo.name;
+          input.required = true;
+
+          form.appendChild(input);
+        }
+      });
+
+      var btnEnviar = document.createElement('button');
+      btnEnviar.type = 'submit';
+      btnEnviar.textContent = 'Enviar';
+      btnEnviar.classList.add('btnEnviar');
+
+      var btnCancelar = document.createElement('button');
+      btnCancelar.type = 'button';
+      btnCancelar.textContent = 'Cancelar';
+      btnCancelar.classList.add('btnCancelar');
+      btnCancelar.addEventListener('click', function () {
+        barraBusqueda.style.display = '';
+        dropdown.style.display = '';
+        restoSeccion.innerHTML = '';
+        mostrarBarraBusquedaOferta();
+        return;
+      });
+
+      form.appendChild(btnEnviar);
+      form.appendChild(btnCancelar);
+
+      form.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        /**/
+        var oferta = {};
+
+        for (var i = 0; i < form.elements.length; i++) {
+          var campo = form.elements[i];
+          if (campo.name) {
+            switch (campo.name) {
+              case 'nombre':
+                oferta.nombre = campo.value;
+                break;
+              case 'descuento':
+                oferta.descuento = parseFloat(campo.value);
+                break;
+              case 'productos':
+                oferta.productos = Array.from(campo.selectedOptions).map(function (option) {
+                  return option.value;
+                });
+                break;
+              case 'imagen':
+                oferta.imagen = campo.value;
+                break;
+              case 'activada':
+                oferta.activada = campo.value === 'true';
+                break;
+            }
+          }
+        }
+
+        obtenerSiguienteIdOferta().then(function (idOferta) {
+          console.log("El próximo IdOferta es:", idOferta);
+          oferta.idOferta = idOferta;
+          //guardarEnBBDD(oferta);
+          console.log('la oferta nueva es: ' + oferta.productos);
+          //console.log('desc prod: ' + buscarProductoPorDescripcion('papas fritas'));
+          buscarProductoPorDescripcion("arroz").then(function (idProducto) {
+            console.log("ID del producto:", idProducto);
+          });
+
+          guardarOfertaBBDD(oferta);
+        });
+        /**/
+
+        obtenerSiguienteIdOferta().then(function (idOferta) {
+          console.log("El próximo IdOferta es:", idOferta);
+        });
+
+        restoSeccion.innerHTML = '';
+        mostrarBarraBusquedaOferta();
+      });
+
+      restoSeccion.appendChild(form);
     });
-
-    form.appendChild(btnEnviar);
-    form.appendChild(btnCancelar);
-    modalContainer.appendChild(form);
-
-    form.addEventListener('submit', function (event) {
-      event.preventDefault();
-
-      const oferta = {
-        nombre: form.nombre.value,
-        descuento: parseFloat(form.descuento.value),
-        productos: form.productos.value.split(' '),
-        imagen: form.imagen.value,
-        activada: form.activada.checked,
-        condiciones: form.condiciones.value.split(',').map(cond => cond.trim()),
-        idOferta: parseInt(form.idOferta.value),
-        menusId: form.menusId.value.split(' '),
-        ofertasId: form.ofertasId.value.split(' '),
-        productosId: form.productosId.value.split(' ')
-      };
-      guardarOfertaBBDD(oferta);
-
-      restoSeccion.innerHTML = '';
-      mostrarBarraBusquedaOferta();
-    });
-
-    restoSeccion.appendChild(modalContainer);
   };
 }
+
+function obtenerSiguienteIdOferta() {
+  var ref = firebase.database().ref("Oferta");
+  return ref.once("value").then(function (snapshot) {
+    var ofertas = snapshot.val();
+    var maxIdOferta = 0;
+    ofertas.forEach(function (oferta) {
+      var idOferta = oferta.IdOferta;
+      if (idOferta > maxIdOferta) {
+        maxIdOferta = idOferta;
+      }
+    });
+    return maxIdOferta + 1;
+  });
+}
+
 
 
 function guardarOfertaBBDD(oferta) {
 
-  const dbRef = firebase.database().ref('Oferta');
+  
+
+
+  /*const dbRef = firebase.database().ref('Oferta');
 
   const nuevaClaveOferta = oferta.idOferta;
 
@@ -1140,9 +1220,32 @@ function guardarOfertaBBDD(oferta) {
     } else {
       console.log('Oferta guardada exitosamente.');
     }
+  });*/
+}
+
+function buscarProductoPorDescripcion(descripcion) {
+  var ref = firebase.database().ref("Producto");
+  return ref.once("value").then(function (snapshot) {
+    var productos = snapshot.val();
+    for (var idProducto in productos) {
+      var producto = productos[idProducto];
+      if (producto.Descripcion.toLowerCase().includes(descripcion.toLowerCase())) {
+        return producto.IdProducto;
+      }
+    }
+    return null; // no se encontró el producto
   });
 }
 
+function obtenerDescripcionesProductos() {
+  return firebase.database().ref('Producto').once('value').then(function (snapshot) {
+    var descripcionesProductos = [];
+    snapshot.forEach(function (childSnapshot) {
+      descripcionesProductos.push(childSnapshot.val().Descripcion);
+    });
+    return descripcionesProductos;
+  });
+}
 
 
 
