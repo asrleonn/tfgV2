@@ -196,77 +196,6 @@ function mostrarProductos(nombreFiltro, consultaBusqueda = '') {
     });
 }
 
-
-
-
-
-
-
-
-
-/*function mostrarOfertas(nombreFiltro, consultaBusqueda = '') {
-  const ofertasRef = firebase.database().ref('Oferta');
-  const productosRef = firebase.database().ref('Producto');
-
-  const contenedor = document.getElementById('resto-seccion-ofertas');
-  contenedor.innerHTML = '';
-
-  ofertasRef.once('value')
-    .then((snapshot) => {
-      const ofertas = snapshot.val();
-      console.log('Ofertas:', ofertas);
-
-      if (!ofertas) {
-        console.log('No hay ofertas disponibles.');
-        return;
-      }
-
-      const ofertasArray = Object.keys(ofertas).map(key => ({
-        ...ofertas[key],
-        key
-      }));
-
-      return productosRef.once('value').then(productSnapshot => {
-        const productos = productSnapshot.val();
-
-        ofertasArray.forEach(oferta => {
-          if (!shouldAddOffer(oferta, nombreFiltro, consultaBusqueda)) return;
-
-          const ofertaDiv = document.createElement('div');
-          ofertaDiv.classList.add('oferta', 'cardboard');
-
-          const img = document.createElement('img');
-          img.src = oferta.RutaImagenOferta;
-          img.alt = oferta.Nombre;
-          ofertaDiv.appendChild(img);
-
-          const nombre = document.createElement('h2');
-          nombre.textContent = oferta.Nombre;
-          ofertaDiv.appendChild(nombre);
-
-          oferta.ProductosId.forEach(productoId => {
-            const producto = productos[productoId];
-            if (producto) {
-              const productosEl = document.createElement('p');
-              productosEl.textContent = `Producto: ${producto.Descripcion}`;
-              ofertaDiv.appendChild(productosEl);
-            }
-          });
-
-          const descuento = document.createElement('p');
-          descuento.textContent = `Descuento: ${oferta.Descuento * 100}%`;
-          ofertaDiv.appendChild(descuento);
-
-          contenedor.appendChild(ofertaDiv);
-        });
-      });
-    })
-    .catch((error) => {
-      console.error('Error al leer las ofertas:', error);
-    });
-}*/
-
-
 function mostrarOfertas(nombreFiltro, consultaBusqueda = '') {
   const ofertasRef = firebase.database().ref('Oferta');
   const productosRef = firebase.database().ref('Producto');
@@ -325,18 +254,6 @@ function mostrarOfertas(nombreFiltro, consultaBusqueda = '') {
       console.error('Error al leer las ofertas:', error);
     });
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 function mostrarPedidos(nombreFiltro, consultaBusqueda = '') {
   const pedidosRef = firebase.database().ref('Pedido');
@@ -814,9 +731,11 @@ function mostrarClientes(nombreFiltro, consultaBusqueda = '') {
 }
 
 /*AÑADIR*/
-function setUpAnadirProd() {
+/*function setUpAnadirProd() {
   var boton = document.getElementById('btMasProd');
   boton.onclick = function () {
+
+    console.log(obtenerTiposComida());
 
     var restoSeccion = document.getElementById('resto-seccion-productos');
     restoSeccion.innerHTML = '';
@@ -911,7 +830,144 @@ function setUpAnadirProd() {
     });
 
   };
+}*/
+
+function setUpAnadirProd() {
+  var boton = document.getElementById('btMasProd');
+  boton.onclick = function () {
+
+    obtenerTiposComida().then(function (tiposComida) {
+      var restoSeccion = document.getElementById('resto-seccion-productos');
+      restoSeccion.innerHTML = '';
+
+      var barraBusqueda = document.getElementById('search-container-prod');
+      var menuDesplegable = document.getElementById('dropdown-prod');
+      barraBusqueda.style.display = 'none';
+      menuDesplegable.style.display = 'none';
+      boton.style.display = 'none';
+
+      var modalContainer = document.createElement('div');
+      modalContainer.className = 'modal-container';
+
+      var form = document.createElement('form');
+      form.id = 'modal-form';
+
+      var campos = [
+        { label: 'Descripción', name: 'descripcion', type: 'text' },
+        { label: 'Ingredientes', name: 'ingredientes', type: 'text' },
+        //{ label: 'Precio', name: 'precio', type: 'number' }, UN CAMBIO
+        { label: 'Precio', name: 'precio', type: 'text' },
+        { label: 'URL de la Imagen', name: 'urlimagen', type: 'url' },
+        { label: 'Stock', name: 'stock', type: 'number' }
+      ];
+
+      campos.forEach(function (campo) {
+        var label = document.createElement('label');
+        label.textContent = campo.label;
+
+        var input = document.createElement('input');
+        input.type = campo.type;
+        input.name = campo.name;
+        input.required = true;
+
+        form.appendChild(label);
+        form.appendChild(input);
+      });
+
+      // Crear select para Tipo
+      var labelTipo = document.createElement('label');
+      labelTipo.textContent = 'Tipo';
+
+      var selectTipo = document.createElement('select');
+      selectTipo.name = 'tipo';
+      selectTipo.required = true;
+
+      tiposComida.forEach(function (tipo) {
+        var option = document.createElement('option');
+        option.value = tipo;
+        option.textContent = tipo;
+        selectTipo.appendChild(option);
+      });
+
+      form.appendChild(labelTipo);
+      form.appendChild(selectTipo);
+
+      var btnEnviar = document.createElement('button');
+      btnEnviar.type = 'submit';
+      btnEnviar.textContent = 'Enviar';
+      btnEnviar.classList.add('btnEnviar');
+
+      var btnCancelar = document.createElement('button');
+      btnCancelar.type = 'button'; // Evitar que el botón envíe el formulario
+      btnCancelar.textContent = 'Cancelar';
+      btnCancelar.classList.add('btnCancelar');
+      btnCancelar.addEventListener('click', function () {
+        restoSeccion.innerHTML = '';
+        barraBusqueda.style.display = '';
+        menuDesplegable.style.display = '';
+        boton.style.display = '';
+        mostrarProductos('todos');
+        return
+      });
+
+      form.appendChild(btnEnviar);
+      form.appendChild(btnCancelar);
+      restoSeccion.appendChild(form);
+
+      form.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        getMaxIdProducto(function (nuevoIdProducto) {
+          if (nuevoIdProducto) {
+            var producto = {
+              descripcion: form.descripcion.value,
+              idProducto: nuevoIdProducto,
+              ingredientes: form.ingredientes.value,
+              precio: parseFloat(form.precio.value),
+              urlimagen: form.urlimagen.value,
+              stock: parseInt(form.stock.value),
+              tipo: form.tipo.value
+            };
+            guardarProductoBBDD(producto);
+
+            restoSeccion.innerHTML = '';
+
+            barraBusqueda.style.display = '';
+            menuDesplegable.style.display = '';
+            boton.style.display = '';
+
+            mostrarBarraBusquedaProd();
+
+            mostrarProductos('todos');
+          } else {
+            console.error('No se pudo obtener un nuevo ID para el producto');
+          }
+        });
+
+      });
+
+    });
+
+  };
 }
+
+
+function obtenerTiposComida() {
+  return firebase.database().ref('Tipo_comida').once('value').then(function (snapshot) {
+    var tiposComida = [];
+    snapshot.forEach(function (childSnapshot) {
+      tiposComida.push(childSnapshot.val());
+    });
+    return tiposComida;
+  });
+}
+
+
+
+
+
+
+
 
 function getMaxIdProducto(callback) {
   const productosRef = firebase.database().ref('Producto');
@@ -952,6 +1008,26 @@ function guardarProductoBBDD(producto) {
     }
   });
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 function setUpAnadirOferta() {
   var btn = document.getElementById('btMasOf');
@@ -1041,6 +1117,48 @@ function setUpAnadirOferta() {
     restoSeccion.appendChild(modalContainer);
   };
 }
+
+
+function guardarOfertaBBDD(oferta) {
+
+  const dbRef = firebase.database().ref('Oferta');
+
+  const nuevaClaveOferta = oferta.idOferta;
+
+  const activada = oferta.activada ? oferta.activada : false;
+
+  dbRef.child(nuevaClaveOferta).set({
+    Activada: activada,
+    Descuento: oferta.descuento,
+    IdOferta: nuevaClaveOferta,
+    Nombre: oferta.nombre,
+    ProductosId: oferta.productos,
+    RutaImagenOferta: oferta.imagen
+  }, function (error) {
+    if (error) {
+      console.error('Error al guardar la oferta en la base de datos:', error);
+    } else {
+      console.log('Oferta guardada exitosamente.');
+    }
+  });
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 function shouldAddOffer(oferta, nombreFiltro, consultaBusqueda) {
   if (consultaBusqueda) {
@@ -1228,29 +1346,6 @@ function mostrarBarraBusquedaOferta() {
 }
 
 /*BBDD*/
-function guardarOfertaBBDD(oferta) {
-
-  const dbRef = firebase.database().ref('Oferta');
-
-  const nuevaClaveOferta = oferta.idOferta;
-
-  const activada = oferta.activada ? oferta.activada : false;
-
-  dbRef.child(nuevaClaveOferta).set({
-    Activada: activada,
-    Descuento: oferta.descuento,
-    IdOferta: nuevaClaveOferta,
-    Nombre: oferta.nombre,
-    ProductosId: oferta.productos,
-    RutaImagenOferta: oferta.imagen
-  }, function (error) {
-    if (error) {
-      console.error('Error al guardar la oferta en la base de datos:', error);
-    } else {
-      console.log('Oferta guardada exitosamente.');
-    }
-  });
-}
 
 
 

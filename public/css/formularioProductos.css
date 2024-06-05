@@ -44,3 +44,19 @@ button {
 .btnCancelar {
     background-color: rgba(255, 0, 0, 0.7);
 }
+
+
+select {
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+    /* para que ocupe todo el ancho del contenedor */
+    height: 35px;
+    /* ajusta el alto según sea necesario */
+    font-size: 16px;
+    /* ajusta el tamaño de la fuente según sea necesario */
+    cursor: pointer;
+    /* para que tenga un cursor de selección */
+}
