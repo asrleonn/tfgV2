@@ -755,9 +755,9 @@ function setUpAnadirProd() {
 
     var campos = [
       { label: 'Descripción', name: 'descripcion', type: 'text' },
-      { label: 'ID del Producto', name: 'idProducto', type: 'text' },
       { label: 'Ingredientes', name: 'ingredientes', type: 'text' },
-      { label: 'Precio', name: 'precio', type: 'number' },
+      //{ label: 'Precio', name: 'precio', type: 'number' }, UN CAMBIO
+      { label: 'Precio', name: 'precio', type: 'text' },
       { label: 'URL de la Imagen', name: 'urlimagen', type: 'url' },
       { label: 'Stock', name: 'stock', type: 'number' },
       { label: 'Tipo', name: 'tipo', type: 'text' }
@@ -801,29 +801,76 @@ function setUpAnadirProd() {
     form.addEventListener('submit', function (event) {
       event.preventDefault();
 
-      var producto = {
-        descripcion: form.descripcion.value,
-        idProducto: form.idProducto.value,
-        ingredientes: form.ingredientes.value,
-        precio: parseFloat(form.precio.value),
-        urlimagen: form.urlimagen.value,
-        stock: parseInt(form.stock.value),
-        tipo: form.tipo.value
-      };
-      guardarProductoBBDD(producto);
+      getMaxIdProducto(function (nuevoIdProducto) {
+        if (nuevoIdProducto) {
+          var producto = {
+            descripcion: form.descripcion.value,
+            idProducto: nuevoIdProducto,
+            ingredientes: form.ingredientes.value,
+            precio: parseFloat(form.precio.value),
+            urlimagen: form.urlimagen.value,
+            stock: parseInt(form.stock.value),
+            tipo: form.tipo.value
+          };
+          guardarProductoBBDD(producto);
 
-      restoSeccion.innerHTML = '';
+          restoSeccion.innerHTML = '';
 
-      barraBusqueda.style.display = '';
-      menuDesplegable.style.display = '';
-      boton.style.display = '';
+          barraBusqueda.style.display = '';
+          menuDesplegable.style.display = '';
+          boton.style.display = '';
 
-      mostrarBarraBusquedaProd();
+          mostrarBarraBusquedaProd();
 
-      mostrarProductos('todos');
+          mostrarProductos('todos');
+        } else {
+          console.error('No se pudo obtener un nuevo ID para el producto');
+        }
+      });
+
     });
 
   };
+}
+
+function getMaxIdProducto(callback) {
+  const productosRef = firebase.database().ref('Producto');
+  let maxIdProducto = 0;
+
+  productosRef.once('value', (snapshot) => {
+    snapshot.forEach((childSnapshot) => {
+      const idProducto = childSnapshot.val().IdProducto;
+      if (idProducto > maxIdProducto) {
+        maxIdProducto = idProducto;
+      }
+    });
+    const nuevoIdProducto = maxIdProducto + 1;
+    console.log(`El nuevo IdProducto es: ${nuevoIdProducto}`);
+    callback(nuevoIdProducto);
+  });
+}
+
+function guardarProductoBBDD(producto) {
+
+  const dbRef = firebase.database().ref('Producto');
+
+  const newProductoKey = producto.idProducto;
+
+  dbRef.child(newProductoKey).set({
+    IdProducto: newProductoKey, // Agregamos la propiedad IdProducto
+    Descripcion: producto.descripcion,
+    Ingredientes: producto.ingredientes,
+    Precio: producto.precio,
+    RutaImagen: producto.urlimagen,
+    Stock: producto.stock,
+    Tipo: producto.tipo
+  }, function (error) {
+    if (error) {
+      console.error('Error al guardar el producto en la base de datos:', error);
+    } else {
+      console.log('Producto guardado exitosamente.');
+    }
+  });
 }
 
 function setUpAnadirOferta() {
@@ -1125,27 +1172,7 @@ function guardarOfertaBBDD(oferta) {
   });
 }
 
-function guardarProductoBBDD(producto) {
 
-  const dbRef = firebase.database().ref('Producto');
-
-  const newProductoKey = producto.idProducto;
-
-  dbRef.child(newProductoKey).set({
-    Descripcion: producto.descripcion,
-    Ingredientes: producto.ingredientes,
-    Precio: producto.precio,
-    RutaImagen: producto.urlimagen,
-    Stock: producto.stock,
-    Tipo: producto.tipo
-  }, function (error) {
-    if (error) {
-      console.error('Error al guardar el producto en la base de datos:', error);
-    } else {
-      console.log('Producto guardado exitosamente.');
-    }
-  });
-}
 
 /*OTROS*/
 function gestionarClientes(correoCliente) {
