@@ -196,7 +196,15 @@ function mostrarProductos(nombreFiltro, consultaBusqueda = '') {
     });
 }
 
-function mostrarOfertas(nombreFiltro, consultaBusqueda = '') {
+
+
+
+
+
+
+
+
+/*function mostrarOfertas(nombreFiltro, consultaBusqueda = '') {
   const ofertasRef = firebase.database().ref('Oferta');
   const productosRef = firebase.database().ref('Producto');
 
@@ -256,7 +264,79 @@ function mostrarOfertas(nombreFiltro, consultaBusqueda = '') {
     .catch((error) => {
       console.error('Error al leer las ofertas:', error);
     });
+}*/
+
+
+function mostrarOfertas(nombreFiltro, consultaBusqueda = '') {
+  const ofertasRef = firebase.database().ref('Oferta');
+  const productosRef = firebase.database().ref('Producto');
+
+  const contenedor = document.getElementById('resto-seccion-ofertas');
+  contenedor.innerHTML = '';
+
+  ofertasRef.once('value')
+    .then((snapshot) => {
+      const ofertas = snapshot.val();
+      console.log('Ofertas:', ofertas);
+
+      if (!ofertas) {
+        console.log('No hay ofertas disponibles.');
+        return;
+      }
+
+      const ofertasArray = Object.keys(ofertas).map(key => ofertas[key]);
+
+      return productosRef.once('value').then(productSnapshot => {
+        const productos = productSnapshot.val();
+
+        ofertasArray.forEach(oferta => {
+          if (!shouldAddOffer(oferta, nombreFiltro, consultaBusqueda)) return;
+
+          const ofertaDiv = document.createElement('div');
+          ofertaDiv.classList.add('oferta', 'cardboard');
+
+          const img = document.createElement('img');
+          img.src = oferta.RutaImagenOferta;
+          img.alt = oferta.Nombre;
+          ofertaDiv.appendChild(img);
+
+          const nombre = document.createElement('h2');
+          nombre.textContent = oferta.Nombre;
+          ofertaDiv.appendChild(nombre);
+
+          oferta.ProductosId.forEach(productoId => {
+            const producto = productos[productoId];
+            if (producto) {
+              const productosEl = document.createElement('p');
+              productosEl.textContent = `Producto: ${producto.Descripcion}`;
+              ofertaDiv.appendChild(productosEl);
+            }
+          });
+
+          const descuento = document.createElement('p');
+          descuento.textContent = `Descuento: ${oferta.Descuento * 100}%`;
+          ofertaDiv.appendChild(descuento);
+
+          contenedor.appendChild(ofertaDiv);
+        });
+      });
+    })
+    .catch((error) => {
+      console.error('Error al leer las ofertas:', error);
+    });
 }
+
+
+
+
+
+
+
+
+
+
+
+
 
 function mostrarPedidos(nombreFiltro, consultaBusqueda = '') {
   const pedidosRef = firebase.database().ref('Pedido');

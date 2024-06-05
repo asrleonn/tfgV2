@@ -5,7 +5,7 @@
       "contraseña": "yz/g449HXXeSlnpBF9bNtHEJpaK0dM7VonPNqEV5UszvDcxbzjFy2CYakv+dG3wh8cgJrwU+dKvIyuVsBjJ7Lxwlsh/3r+Xi9+S6bwbuiKk=",
       "correo": "juan@example.com",
       "idCliente": 0,
-      "nombre": "Juanaaaggg",
+      "nombre": "Juanangf",
       "puntos": 179
     },
     null,
@@ -42,11 +42,20 @@
       "puntos": 0
     },
     {
+      "Bloqueado": true,
       "bloqueado": false,
       "contraseña": "d0NL7GSBLFTDJnRz/IwSa9sS85h90/Cxnoblb1Qiqy2RfBsU8abXwFbYDdyUg6LY4PAy0GX3JcPrq2rRJF3dShwlsh/3r+Xi9+S6bwbuiKk=",
       "correo": "aaaa",
       "idCliente": 6,
       "nombre": "aaa",
+      "puntos": 0
+    },
+    {
+      "bloqueado": false,
+      "contraseña": "yz/g449HXXeSlnpBF9bNtHEJpaK0dM7VonPNqEV5UszvDcxbzjFy2CYakv+dG3wh8cgJrwU+dKvIyuVsBjJ7Lxwlsh/3r+Xi9+S6bwbuiKk=",
+      "correo": "alexgg@gmail.com",
+      "idCliente": 7,
+      "nombre": "alejandro",
       "puntos": 0
     }
   ],
@@ -117,20 +126,20 @@
       "formattedValue": "3.99€"
     },
     {
-      "Canjeado": false,
+      "Canjeado": true,
       "IdCliente": 0,
       "IdCupon": 9,
       "Puntos": 500,
       "Valor": 3.99,
-      "formattedValue": "3.99€"
+      "formattedValue": "3,99€"
     },
     {
-      "Canjeado": false,
+      "Canjeado": true,
       "IdCliente": 0,
       "IdCupon": 10,
       "Puntos": 500,
       "Valor": 3.99,
-      "formattedValue": "3.99€"
+      "formattedValue": "3,99€"
     },
     {
       "Canjeado": true,
@@ -141,15 +150,15 @@
       "formattedValue": "3.99€"
     },
     {
-      "Canjeado": false,
+      "Canjeado": true,
       "IdCliente": 0,
       "IdCupon": 12,
       "Puntos": 500,
       "Valor": 3.99,
-      "formattedValue": "3.99€"
+      "formattedValue": "3,99€"
     },
     {
-      "Canjeado": false,
+      "Canjeado": true,
       "IdCliente": 0,
       "IdCupon": 13,
       "Puntos": 500,
@@ -157,7 +166,7 @@
       "formattedValue": "3.99€"
     },
     {
-      "Canjeado": false,
+      "Canjeado": true,
       "IdCliente": 0,
       "IdCupon": 14,
       "Puntos": 500,
@@ -165,20 +174,20 @@
       "formattedValue": "3.99€"
     },
     {
-      "Canjeado": false,
+      "Canjeado": true,
       "IdCliente": 0,
       "IdCupon": 15,
       "Puntos": 500,
       "Valor": 3.99,
-      "formattedValue": "3.99€"
+      "formattedValue": "3,99€"
     },
     {
-      "Canjeado": false,
+      "Canjeado": true,
       "IdCliente": 0,
       "IdCupon": 16,
       "Puntos": 500,
       "Valor": 3.99,
-      "formattedValue": "3.99€"
+      "formattedValue": "3,99€"
     },
     {
       "Canjeado": false,
@@ -187,29 +196,25 @@
       "Puntos": 500,
       "Valor": 3.99,
       "formattedValue": "3.99€"
+    },
+    {
+      "Canjeado": true,
+      "IdCliente": 0,
+      "IdCupon": 18,
+      "Puntos": 500,
+      "Valor": 3.99,
+      "formattedValue": "3.99€"
     }
   ],
   "Oferta": [
     {
       "Activada": true,
-      "Condiciones": [
-        "Condición 1",
-        "Condición 2"
-      ],
       "Descuento": 0.15,
       "IdOferta": 0,
-      "MenusId": [
-        1,
-        2
-      ],
       "Nombre": "Brasa Crispy",
-      "OfertasId": [
-        1,
-        2
-      ],
       "ProductosId": [
-        1,
-        2
+        0,
+        1
       ],
       "RutaImagenOferta": "https://previews.123rf.com/images/magone/magone1311/magone131100027/23389096-pollo-a-la-parrilla-y-papas-fritas-franc%C3%A9s-en-la-placa-blanca.jpg"
     }
@@ -323,7 +328,7 @@
       ]
     },
     {
-      "clienteId": 0,
+      "clienteId": 1,
       "entregado": false,
       "fechaHora": {
         "chronology": {
@@ -341,7 +346,7 @@
         "second": 48,
         "year": 2024
       },
-      "idPedido": 0,
+      "idPedido": 1,
       "importe": 9.942,
       "menus": [
         {
@@ -381,7 +386,7 @@
       "clienteId": 0,
       "entregado": false,
       "fechaHora": {
-        "dayOfMonth": 2,
+        "dayOfMonth": 3,
         "hour": 22,
         "minute": 50,
         "monthValue": 6,
@@ -414,12 +419,125 @@
       "productosId": [
         8
       ]
+    },
+    {
+      "clienteId": 0,
+      "entregado": false,
+      "fechaHora": {
+        "dayOfMonth": 3,
+        "hour": 17,
+        "minute": 56,
+        "monthValue": 6,
+        "nano": 10939000,
+        "second": 56,
+        "year": 2024
+      },
+      "idPedido": 5,
+      "importe": 9.942,
+      "menus": [
+        {
+          "idBebida": 3,
+          "idComplemento": 1,
+          "idEntrante": 0,
+          "idMenu": 1710,
+          "precioMenu": 13.932
+        }
+      ]
+    },
+    null,
+    null,
+    {
+      "clienteId": 0,
+      "entregado": false,
+      "fechaHora": {
+        "chronology": {
+          "calendarType": "iso8601",
+          "id": "ISO"
+        },
+        "dayOfMonth": 3,
+        "dayOfWeek": "MONDAY",
+        "dayOfYear": 155,
+        "hour": 18,
+        "minute": 7,
+        "month": "JUNE",
+        "monthValue": 6,
+        "nano": 98953000,
+        "second": 24,
+        "year": 2024
+      },
+      "idPedido": 8,
+      "importe": 0.99,
+      "productosId": [
+        8
+      ]
+    },
+    {
+      "clienteId": 0,
+      "entregado": false,
+      "fechaHora": {
+        "chronology": {
+          "calendarType": "iso8601",
+          "id": "ISO"
+        },
+        "dayOfMonth": 3,
+        "dayOfWeek": "MONDAY",
+        "dayOfYear": 155,
+        "hour": 17,
+        "minute": 27,
+        "month": "JUNE",
+        "monthValue": 6,
+        "nano": 816720000,
+        "second": 38,
+        "year": 2024
+      },
+      "idPedido": 9,
+      "importe": 13.923,
+      "menus": [
+        {
+          "idBebida": 3,
+          "idComplemento": 1,
+          "idEntrante": 0,
+          "idMenu": 2518,
+          "precioMenu": 13.923
+        }
+      ]
+    },
+    {
+      "clienteId": 0,
+      "entregado": false,
+      "fechaHora": {
+        "chronology": {
+          "calendarType": "iso8601",
+          "id": "ISO"
+        },
+        "dayOfMonth": 4,
+        "dayOfWeek": "TUESDAY",
+        "dayOfYear": 156,
+        "hour": 19,
+        "minute": 13,
+        "month": "JUNE",
+        "monthValue": 6,
+        "nano": 108559000,
+        "second": 27,
+        "year": 2024
+      },
+      "idPedido": 10,
+      "importe": 13.923,
+      "menus": [
+        {
+          "idBebida": 2,
+          "idComplemento": 1,
+          "idEntrante": 0,
+          "idMenu": 1,
+          "precioMenu": 13.923
+        }
+      ]
     }
   ],
   "Producto": [
     {
       "Descripcion": "Pollo a la brasa",
-      "IdProducto": 1,
+      "IdProducto": 0,
       "Ingredientes": "Pollo asado con hierbas y especias",
       "Precio": 10.99,
       "RutaImagen": "https://img.freepik.com/fotos-premium/pollo-asado-navideno-especias-hierbas-sobre-fondo-blanco-madera-espacio-copiar-concepto-comida-navidena_652855-751.jpg?w=1380",
@@ -428,43 +546,43 @@
     },
     {
       "Descripcion": "Papas fritas",
-      "IdProducto": 2,
+      "IdProducto": 1,
       "Ingredientes": "Papas cortadas en tiras y fritas",
-      "Precio": 2.5,
+      "Precio": 2.49,
       "RutaImagen": "https://www.mardequel.com/12-product_medium_default/patatas-fritas-38.jpg",
-      "Stock": 0,
+      "Stock": 5,
       "Tipo": "acompañamiento"
     },
     {
       "Descripcion": "Refresco de cola",
-      "IdProducto": 3,
+      "IdProducto": 2,
       "Ingredientes": "Agua carbonatada, azúcar y extracto de cola",
       "Precio": 1.99,
       "RutaImagen": "https://www.encopadebalon.com/3493-large_default/coca-cola-lata-33cl-caja-24unid.jpg",
-      "Stock": 150,
+      "Stock": 145,
       "Tipo": "bebida"
     },
     {
       "Descripcion": "Ensalada fresca",
-      "IdProducto": 4,
+      "IdProducto": 3,
       "Ingredientes": "Lechuga, tomate, pepino y aderezo",
-      "Precio": 3.5,
+      "Precio": 3.49,
       "RutaImagen": "https://img.freepik.com/fotos-premium/ensalada-verduras-frescas-cuenco-ceramica-aislado-sobre-fondo-blanco_183587-2385.jpg?w=1380",
-      "Stock": 50,
+      "Stock": 144,
       "Tipo": "entrante"
     },
     {
       "Descripcion": "Flan casero",
-      "IdProducto": 5,
+      "IdProducto": 4,
       "Ingredientes": "Leche, huevos, azúcar y caramelo",
       "Precio": 4.99,
       "RutaImagen": "https://cdn0.recetasgratis.net/es/posts/0/4/3/flan_napolitano_15340_600.jpg",
-      "Stock": 30,
+      "Stock": 40,
       "Tipo": "postre"
     },
     {
       "Descripcion": "Hamburguesa clásica",
-      "IdProducto": 6,
+      "IdProducto": 5,
       "Ingredientes": "Carne de res, lechuga, tomate, cebolla y salsa especial",
       "Precio": 8.99,
       "RutaImagen": "https://i0.wp.com/elplanetaurbano.com/wp-content/uploads/2023/05/Dia-de-la-Hamburguesa-Planeta-Urbano-2023-Baum-2.jpg?resize=1250%2C781&ssl=1",
@@ -473,75 +591,100 @@
     },
     {
       "Descripcion": "Ensalada César",
-      "IdProducto": 7,
+      "IdProducto": 6,
       "Ingredientes": "Lechuga romana, pollo a la parrilla, queso parmesano, crutones y aderezo César",
-      "Precio": 6.5,
+      "Precio": 6.49,
       "RutaImagen": "https://previews.123rf.com/images/nitr/nitr1105/nitr110500019/9574604-ensalada-c%C3%A9sar-sobre-fondo-blanco.jpg",
       "Stock": 40,
       "Tipo": "acompañamiento"
     },
     {
       "Descripcion": "Agua mineral",
-      "IdProducto": 8,
+      "IdProducto": 7,
       "Ingredientes": "Agua purificada",
       "Precio": 0.99,
       "RutaImagen": "https://i.pinimg.com/736x/c1/72/de/c172de4175d336ee5d4655a1d63a365e.jpg",
-      "Stock": 120,
+      "Stock": 34,
       "Tipo": "bebida"
     },
     {
       "Descripcion": "Sopa de verduras",
-      "IdProducto": 9,
+      "IdProducto": 8,
       "Ingredientes": "Caldo de verduras con zanahoria, calabacín, apio y cebolla",
-      "Precio": 4.25,
+      "Precio": 4.49,
       "RutaImagen": "https://img.freepik.com/fotos-premium/sopa-verduras-aislado-sobre-fondo-blanco_488220-4112.jpg",
       "Stock": 60,
       "Tipo": "entrante"
     },
     {
       "Descripcion": "Empanadas Argentinas",
-      "IdProducto": 10,
+      "IdProducto": 9,
       "Ingredientes": "hojaldre, relleno de empanada",
-      "Precio": 3,
+      "Precio": 2.99,
       "RutaImagen": "https://imagenes.20minutos.es/files/image_1920_1080/uploads/imagenes/2023/09/27/empanadas-sabores-express.jpeg",
       "Stock": 10,
       "Tipo": "comida principal"
     },
     {
       "Descripcion": "Arroz",
-      "IdProducto": 11,
+      "IdProducto": 10,
       "Ingredientes": "Arroz",
-      "Precio": 10,
+      "Precio": 9.99,
       "RutaImagen": "https://d36fw6y2wq3bat.cloudfront.net/recipes/el-perfecto-arroz-blanco/900/el-perfecto-arroz-blanco_version_1655956867.jpg",
       "Stock": 50,
       "Tipo": "postre"
     },
     {
       "Descripcion": "Café",
-      "IdProducto": 12,
+      "IdProducto": 11,
       "Ingredientes": "Café molido, agua",
-      "Precio": 2.5,
+      "Precio": 2.49,
       "RutaImagen": "https://media.istockphoto.com/id/163939725/es/foto/taza-de-caf%C3%A9.jpg?s=612x612&w=0&k=20&c=Kq7jtc3LaDbM-X_sQ2QE-4f2xUUeqMpO5rIN4QjuPgI=",
       "Stock": 100,
       "Tipo": "bebida"
     },
     {
       "Descripcion": "Té helado",
-      "IdProducto": 13,
+      "IdProducto": 12,
       "Ingredientes": "Té negro, hielo, azúcar",
-      "Precio": 2,
+      "Precio": 1.99,
       "RutaImagen": "https://cdn7.kiwilimon.com/recetaimagen/3613/18285.jpg",
-      "Stock": 100,
+      "Stock": 94,
       "Tipo": "bebida"
     },
     {
       "Descripcion": "Batido de fresa",
-      "IdProducto": 14,
+      "IdProducto": 13,
       "Ingredientes": "Fresas, leche, azúcar",
-      "Precio": 3.5,
+      "Precio": 3.49,
       "RutaImagen": "https://t1.uc.ltmcdn.com/es/posts/1/2/5/como_hacer_batido_de_fresa_7521_orig.jpg",
-      "Stock": 50,
+      "Stock": 93,
       "Tipo": "bebida"
+    },
+    {
+      "Descripcion": "Arroz con leche",
+      "IdProducto": 14,
+      "Ingredientes": "Arroz, leche",
+      "Precio": 3,
+      "RutaImagen": "https://t1.uc.ltmcdn.com/es/posts/3/8/5/como_hacer_arroz_con_leche_50583_600.jpg",
+      "Stock": 5,
+      "Tipo": "postre"
+    },
+    {
+      "Descripcion": "Natillas",
+      "IdProducto": 15,
+      "Ingredientes": "Natillas, galleta",
+      "Precio": 2.99,
+      "RutaImagen": "https://www.unileverfoodsolutions.es/dam/global-ufs/mcos/SPAIN/calcmenu/recipes/ES-recipes/general/natillas/main-header.jpg",
+      "Stock": 100,
+      "Tipo": "postre"
     }
+  ],
+  "Tipo_comida": [
+    "comida principal",
+    "acompañamiento",
+    "bebida",
+    "entrante",
+    "postre"
   ]
 }
