@@ -2,6 +2,6 @@
 ## Próximos cambios:  
 - refrescar pedidos (hacerlos no no?)
 - pantalla de edición
-- imagen
-- id cliente en pedidos, no borrarlos, filtros, puntos
+- pedidos: puntos
 - documentacion
+- excepcion 'no ponia un numero'

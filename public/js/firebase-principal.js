@@ -971,7 +971,7 @@ function setUpAnadirOferta() {
 
       var campos = [
         { label: 'Nombre', name: 'nombre', type: 'text' },
-        { label: 'Descuento', name: 'descuento', type: 'text' },
+        { label: 'Descuento (en tanto por uno)', name: 'descuento', type: 'text' },
         { label: 'Productos (selección múltiple)', name: 'productos', type: 'select', multiple: true },
         { label: 'Imagen de la Oferta (URL)', name: 'imagen', type: 'url' },
         { label: 'Estado de la oferta', name: 'activada', type: 'select' }
