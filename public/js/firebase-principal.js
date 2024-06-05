@@ -107,8 +107,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-
-/*FUNCIONES MOSTRAR*/
 function mostrarProductos(nombreFiltro, consultaBusqueda = '') {
 
   const productosRef = firebase.database().ref('Producto');
@@ -156,6 +154,12 @@ function mostrarProductos(nombreFiltro, consultaBusqueda = '') {
           const stock = document.createElement('p');
           stock.textContent = `Stock: ${producto.Stock}`;
           productoDiv.appendChild(stock);
+
+          if(producto.Stock > 0) {
+            productoDiv.classList.add('cardboard-azul');
+          } else {
+            productoDiv.classList.add('cardboard-rojo');
+          }
 
           var anadirProd = false;
 
@@ -223,6 +227,13 @@ function mostrarOfertas(nombreFiltro, consultaBusqueda = '') {
 
           const ofertaDiv = document.createElement('div');
           ofertaDiv.classList.add('oferta', 'cardboard');
+
+          //dependiendo de si está activa o no la muestro en rojo o en azul
+          if(oferta.Activada) {
+            ofertaDiv.classList.add('cardboard-azul');
+          } else {
+            ofertaDiv.classList.add('cardboard-rojo');
+          }
 
           const img = document.createElement('img');
           img.src = oferta.RutaImagenOferta;
@@ -513,7 +524,6 @@ function borrarPedido(btn) {
 
 }
 
-
 function restarStockEnBD(idProducto) {
   const productosRef = firebase.database().ref('Producto');
 
@@ -541,7 +551,6 @@ function restarStockEnBD(idProducto) {
       console.error('Error al restar el stock del producto con ID:', idProducto, error);
     });
 }
-
 
 function setUpStockProductos() {
   var btnBuscar = document.getElementById('frmStock-boton-buscar');
@@ -623,8 +632,6 @@ function setUpStockProductos() {
   };
 }
 
-
-//verificar stock de un producto
 function verificarStock(idProducto) {
 
   const productosRef = firebase.database().ref('Producto');
@@ -644,7 +651,6 @@ function verificarStock(idProducto) {
     });
 }
 
-// Función para obtener el ID de un menú
 function obtenerMenuId(idMenu) {
   return new Promise((resolve, reject) => {
     const menuRef = firebase.database().ref('Menus').child(idMenu);
@@ -685,9 +691,11 @@ function mostrarClientes(nombreFiltro, consultaBusqueda = '') {
       if (cliente.bloqueado) {
         botonBanear.textContent = 'Desbloquear';
         botonBanear.style.backgroundColor = '#00cc00'; // Verde
+        clienteDiv.classList.add('cardboard-rojo');
       } else {
         botonBanear.textContent = 'Bloquear';
         botonBanear.style.backgroundColor = '#ff3333'; // Rojo
+        clienteDiv.classList.add('cardboard-azul');
       }
 
       botonBanear.onclick = function () {
@@ -729,108 +737,6 @@ function mostrarClientes(nombreFiltro, consultaBusqueda = '') {
     });
   });
 }
-
-/*AÑADIR*/
-/*function setUpAnadirProd() {
-  var boton = document.getElementById('btMasProd');
-  boton.onclick = function () {
-
-    console.log(obtenerTiposComida());
-
-    var restoSeccion = document.getElementById('resto-seccion-productos');
-    restoSeccion.innerHTML = '';
-
-    var barraBusqueda = document.getElementById('search-container-prod');
-    var menuDesplegable = document.getElementById('dropdown-prod');
-    barraBusqueda.style.display = 'none';
-    menuDesplegable.style.display = 'none';
-    boton.style.display = 'none';
-
-    var modalContainer = document.createElement('div');
-    modalContainer.className = 'modal-container';
-
-    var form = document.createElement('form');
-    form.id = 'modal-form';
-
-    var campos = [
-      { label: 'Descripción', name: 'descripcion', type: 'text' },
-      { label: 'Ingredientes', name: 'ingredientes', type: 'text' },
-      //{ label: 'Precio', name: 'precio', type: 'number' }, UN CAMBIO
-      { label: 'Precio', name: 'precio', type: 'text' },
-      { label: 'URL de la Imagen', name: 'urlimagen', type: 'url' },
-      { label: 'Stock', name: 'stock', type: 'number' },
-      { label: 'Tipo', name: 'tipo', type: 'text' }
-    ];
-
-    campos.forEach(function (campo) {
-      var label = document.createElement('label');
-      label.textContent = campo.label;
-
-      var input = document.createElement('input');
-      input.type = campo.type;
-      input.name = campo.name;
-      input.required = true;
-
-      form.appendChild(label);
-      form.appendChild(input);
-    });
-
-    var btnEnviar = document.createElement('button');
-    btnEnviar.type = 'submit';
-    btnEnviar.textContent = 'Enviar';
-    btnEnviar.classList.add('btnEnviar');
-
-    var btnCancelar = document.createElement('button');
-    btnCancelar.type = 'button'; // Evitar que el botón envíe el formulario
-    btnCancelar.textContent = 'Cancelar';
-    btnCancelar.classList.add('btnCancelar');
-    btnCancelar.addEventListener('click', function () {
-      restoSeccion.innerHTML = '';
-      barraBusqueda.style.display = '';
-      menuDesplegable.style.display = '';
-      boton.style.display = '';
-      mostrarProductos('todos');
-      return
-    });
-
-    form.appendChild(btnEnviar);
-    form.appendChild(btnCancelar);
-    restoSeccion.appendChild(form);
-
-    form.addEventListener('submit', function (event) {
-      event.preventDefault();
-
-      getMaxIdProducto(function (nuevoIdProducto) {
-        if (nuevoIdProducto) {
-          var producto = {
-            descripcion: form.descripcion.value,
-            idProducto: nuevoIdProducto,
-            ingredientes: form.ingredientes.value,
-            precio: parseFloat(form.precio.value),
-            urlimagen: form.urlimagen.value,
-            stock: parseInt(form.stock.value),
-            tipo: form.tipo.value
-          };
-          guardarProductoBBDD(producto);
-
-          restoSeccion.innerHTML = '';
-
-          barraBusqueda.style.display = '';
-          menuDesplegable.style.display = '';
-          boton.style.display = '';
-
-          mostrarBarraBusquedaProd();
-
-          mostrarProductos('todos');
-        } else {
-          console.error('No se pudo obtener un nuevo ID para el producto');
-        }
-      });
-
-    });
-
-  };
-}*/
 
 function setUpAnadirProd() {
   var boton = document.getElementById('btMasProd');
@@ -952,7 +858,6 @@ function setUpAnadirProd() {
   };
 }
 
-
 function obtenerTiposComida() {
   return firebase.database().ref('Tipo_comida').once('value').then(function (snapshot) {
     var tiposComida = [];
@@ -1002,27 +907,6 @@ function guardarProductoBBDD(producto) {
     }
   });
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 function setUpAnadirOferta() {
   var btn = document.getElementById('btMasOf');
@@ -1164,14 +1048,6 @@ function setUpAnadirOferta() {
 
           guardarOfertaBBDD(oferta);
         });
-        /**/
-
-        /*obtenerSiguienteIdOferta().then(function (idOferta) {
-          console.log("El próximo IdOferta es:", idOferta);
-        });*/
-
-       /* restoSeccion.innerHTML = '';
-        mostrarBarraBusquedaOferta(); //supuestamente llama a mostrar todos*/
       });
 
       restoSeccion.appendChild(form);
@@ -1193,8 +1069,6 @@ function obtenerSiguienteIdOferta() {
     return maxIdOferta + 1;
   });
 }
-
-
 
 function guardarOfertaBBDD(oferta) {
   // Obtener el ID de los productos asociados a la oferta
@@ -1255,22 +1129,6 @@ function obtenerDescripcionesProductos() {
   });
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 function shouldAddOffer(oferta, nombreFiltro, consultaBusqueda) {
   if (consultaBusqueda) {
     return oferta.Nombre.toLowerCase().trim().includes(consultaBusqueda.toLowerCase().trim());
@@ -1287,7 +1145,6 @@ function shouldAddOffer(oferta, nombreFiltro, consultaBusqueda) {
   }
 }
 
-/*OBTENCIÓN DE DATOS*/
 async function obtenerNombreCliente(clienteId) {
   return new Promise((resolve, reject) => {
     const clientesRef = firebase.database().ref('Cliente');
@@ -1315,7 +1172,6 @@ async function obtenerNombreCliente(clienteId) {
       });
   });
 }
-
 
 function obtenerDescripcionProducto(productoId) {
   const productosRef = firebase.database().ref('Producto');
@@ -1355,7 +1211,6 @@ function obtenerNombreOferta(ofertaId) {
   });
 }
 
-/*BARRAS DE BÚSQUEDA*/
 function setUpBarraBusqueda(seccion) {
   switch (seccion) {
     case 'pedidos':
@@ -1456,11 +1311,6 @@ function mostrarBarraBusquedaOferta() {
   mostrarOfertas('todos');
 }
 
-/*BBDD*/
-
-
-
-/*OTROS*/
 function gestionarClientes(correoCliente) {
   var database = firebase.database();
 

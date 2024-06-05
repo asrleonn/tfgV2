@@ -1,6 +1,6 @@
 .cardboard {
-    background: #e1e8ec;
-    border: 1px solid #284a66;
+    /*background: #e1e8ec;
+    border: 1px solid #284a66;*/
     border-radius: 8px;
     box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
     padding: 15px;
@@ -58,4 +58,14 @@
 .cardboard p {
     margin: 5px 0;
     color: #5d4037;
+}
+
+.cardboard-azul {
+    background: #e1e8ec;
+    border: 1px solid #284a66;
+}
+
+.cardboard-rojo {
+    background: #ece1e1;
+    border: 1px solid #662828;
 }
