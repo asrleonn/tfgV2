@@ -527,7 +527,8 @@ function marcarComoHecho(btn) {
             return; // Salir de la función
           }
           Promise.all(ids.map(id => restarStockEnBD(id))).then(() => {
-            pedidosRef.child(pedidoSeleccionado.idPedido.toString()).update({
+            entregarProducto(pedidoSeleccionado.idPedido);
+            /*pedidosRef.child(pedidoSeleccionado).update({
               entregado: true
             })
               .then(() => {
@@ -536,8 +537,10 @@ function marcarComoHecho(btn) {
               })
               .catch((error) => {
                 console.error('Error al marcar el pedido como entregado:', error);
-              });
+              });*/
           });
+
+          
 
         })
 
@@ -548,6 +551,18 @@ function marcarComoHecho(btn) {
     console.error('Error al recuperar los pedidos:', error);
   });
 
+}
+
+function entregarProducto(idPedido) {
+  const pedidosRef = firebase.database().ref('Pedido');
+  pedidosRef.once('value', (snapshot) => {
+    snapshot.forEach((pedido) => {
+      if (pedido.val().idPedido === idPedido) {
+        pedido.ref.update({ entregado: true });
+        mostrarPedidos('en curso');
+      }
+    });
+  });
 }
 
 function restarStockEnBD(idProducto) {
