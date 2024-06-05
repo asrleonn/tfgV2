@@ -1152,7 +1152,7 @@ function setUpAnadirOferta() {
           }
         }
 
-        obtenerSiguienteIdOferta().then(async function (idOferta) {
+        obtenerSiguienteIdOferta().then(function (idOferta) {
           console.log("El próximo IdOferta es:", idOferta);
           oferta.idOferta = idOferta;
           //guardarEnBBDD(oferta);
@@ -1162,17 +1162,16 @@ function setUpAnadirOferta() {
             console.log("ID del producto:", idProducto);
           });
 
-          await guardarOfertaBBDD(oferta);
+          guardarOfertaBBDD(oferta);
         });
         /**/
 
-        obtenerSiguienteIdOferta().then(function (idOferta) {
+        /*obtenerSiguienteIdOferta().then(function (idOferta) {
           console.log("El próximo IdOferta es:", idOferta);
-        });
+        });*/
 
-        restoSeccion.innerHTML = '';
-        mostrarBarraBusquedaOferta();
-        mostrarOfertas('todos'); /*seguir por aqui*/
+       /* restoSeccion.innerHTML = '';
+        mostrarBarraBusquedaOferta(); //supuestamente llama a mostrar todos*/
       });
 
       restoSeccion.appendChild(form);
@@ -1221,6 +1220,11 @@ function guardarOfertaBBDD(oferta) {
     const ref = firebase.database().ref("Oferta");
     ref.child(oferta.idOferta).set(ofertaBBDD).then(() => {
       console.log("Oferta guardada correctamente");
+      
+      var restoSeccion = document.getElementById('resto-seccion-ofertas');
+
+      restoSeccion.innerHTML = '';
+      mostrarBarraBusquedaOferta();
     }).catch(error => {
       console.error("Error al guardar la oferta:", error);
     });
