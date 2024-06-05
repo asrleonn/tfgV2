@@ -12,7 +12,8 @@ document.addEventListener('DOMContentLoaded', function () {
       mostrarTodo(false);
     }
 
-    mostrarPedidos('todos');
+    mostrarPedidos('en curso');
+    setUpBarraBusqueda('pedidos');
 
   } else {
     console.log('No hay usuario almacenado.');
@@ -67,7 +68,8 @@ document.addEventListener('DOMContentLoaded', () => {
       var nombreSeccion = document.getElementById(contentToShow).getAttribute('data-name');
       switch (nombreSeccion) {
         case 'pedidos':
-          mostrarPedidos('todos');
+          setUpBarraBusqueda('pedidos');
+          mostrarPedidos('en curso');
           break;
         case 'productos':
           mostrarBarraBusquedaProd();
@@ -155,7 +157,7 @@ function mostrarProductos(nombreFiltro, consultaBusqueda = '') {
           stock.textContent = `Stock: ${producto.Stock}`;
           productoDiv.appendChild(stock);
 
-          if(producto.Stock > 0) {
+          if (producto.Stock > 0) {
             productoDiv.classList.add('cardboard-azul');
           } else {
             productoDiv.classList.add('cardboard-rojo');
@@ -229,7 +231,7 @@ function mostrarOfertas(nombreFiltro, consultaBusqueda = '') {
           ofertaDiv.classList.add('oferta', 'cardboard');
 
           //dependiendo de si está activa o no la muestro en rojo o en azul
-          if(oferta.Activada) {
+          if (oferta.Activada) {
             ofertaDiv.classList.add('cardboard-azul');
           } else {
             ofertaDiv.classList.add('cardboard-rojo');
@@ -266,6 +268,7 @@ function mostrarOfertas(nombreFiltro, consultaBusqueda = '') {
     });
 }
 
+
 function mostrarPedidos(nombreFiltro, consultaBusqueda = '') {
   const pedidosRef = firebase.database().ref('Pedido');
 
@@ -291,7 +294,7 @@ function mostrarPedidos(nombreFiltro, consultaBusqueda = '') {
 
           return {
             idPedido: pedido.idPedido,
-            clienteId: pedido.clienteId || '', // Aquí estamos guardando el ID del cliente
+            clienteId: pedido.clienteId || '0', // Aquí estamos guardando el ID del cliente
             entregado: pedido.entregado || false,
             fechaHora: fechaHora,
             importe: pedido.importe || 0,
@@ -306,7 +309,31 @@ function mostrarPedidos(nombreFiltro, consultaBusqueda = '') {
 
         // Mostrar cada pedido en HTML
         pedidosArray.forEach(pedido => {
-          console.log(pedido.clienteId);
+
+          var anadirProd = false;
+
+          if (consultaBusqueda == '') {
+            switch (nombreFiltro) {
+              case 'en curso':
+                if (!pedido.entregado) {
+                  anadirProd = true;
+                }
+                break;
+              case 'terminados':
+                if (pedido.entregado) {
+                  anadirProd = true;
+                }
+                break;
+              case 'todos':
+                anadirProd = true;
+                break;
+            }
+          } else {
+            if (pedido.idPedido.toString().toLowerCase().trim().includes(consultaBusqueda.toLowerCase().trim())) {
+              anadirProd = true;
+            }
+          }
+
           obtenerNombreCliente(pedido.clienteId)
             .then(nombreCliente => {
               pedido.nombreCliente = nombreCliente;
@@ -331,15 +358,21 @@ function mostrarPedidos(nombreFiltro, consultaBusqueda = '') {
                 .then(descripciones => {
                   pedido.Productos = descripciones.slice(0, pedido.Productos.length);
                   pedido.Ofertas = descripciones.slice(pedido.Productos.length);
+                  console.log('id del cliente' + pedido.clienteId);
 
-                  mostrarPedidoEnHTML(pedido, contenedorPedidos);
+                  /*CUIDAO*/
+                  if (anadirProd) {
+                    mostrarPedidoEnHTML(pedido, contenedorPedidos);
+                  }
                 });
             })
             .catch(error => {
               console.error('Error al obtener el nombre del cliente:', error);
               // Si hay un error al obtener el nombre del cliente, mostramos el ID del cliente en su lugar
               pedido.nombreCliente = pedido.clienteId;
-              mostrarPedidoEnHTML(pedido, contenedorPedidos);
+              if (anadirProd) {
+                mostrarPedidoEnHTML(pedido, contenedorPedidos);
+              }
             });
         });
       } else {
@@ -364,9 +397,13 @@ async function mostrarPedidoEnHTML(pedido, contenedor) {
   pedidoElement.className = 'pedido';
   // Agregar contenido a los elementos
   h3.innerHTML = `<b>Pedido</b>: ${pedido.idPedido}`;
-  clienteParrafo.innerHTML = `<b>Cliente:</b> ${pedido.clienteId}`;
 
-  const nombreCliente = await obtenerNombreCliente(pedido.clienteId);
+  const nombreCliente = await obtenerNombreCliente(parseInt(pedido.clienteId));
+
+  //clienteParrafo.innerHTML = `<b>Cliente:</b> ${parseInt(pedido.clienteId)}`;
+  clienteParrafo.innerHTML = `<b>Cliente:</b> ${nombreCliente}`;
+
+
   console.log(nombreCliente);
   entregadoParrafo.innerHTML = `<b>Entregado:</b> ${pedido.entregado ? 'Sí' : 'No'}`;
   fechaHoraParrafo.innerHTML = `<b>Fecha y Hora:</b> ${pedido.fechaHora.toLocaleString()}`;
@@ -374,7 +411,7 @@ async function mostrarPedidoEnHTML(pedido, contenedor) {
 
   // Agregar elementos al contenedor
   pedidoElement.appendChild(h3);
-  //pedidoElement.appendChild(clienteParrafo);
+  pedidoElement.appendChild(clienteParrafo);
 
 
   // Condicionalmente agregar párrafos para productos, ofertas y menús
@@ -400,25 +437,30 @@ async function mostrarPedidoEnHTML(pedido, contenedor) {
   pedidoElement.appendChild(fechaHoraParrafo);
   pedidoElement.appendChild(importeParrafo);
 
-  const btnHecho = document.createElement('button');
-  btnHecho.classList.add('btn-entregar');
-  btnHecho.textContent = 'Hecho';
-  btnHecho.addEventListener('click', function () {
-    borrarPedido(this); // Pasar el botón como argumento a la función borrarPedido
-  });
-
-  btnHecho.id = pedido.idPedido;
-  //console.log(btnHecho.id);
-  pedidoElement.appendChild(btnHecho);
+  if (!pedido.entregado) {
+    pedidoElement.classList.add('pedido-sin-entregar');
+    const btnHecho = document.createElement('button');
+    btnHecho.classList.add('btn-entregar');
+    btnHecho.textContent = 'Hecho';
+    btnHecho.id = pedido.idPedido;
+    btnHecho.addEventListener('click', function () {
+      //alert('id pedido: ' + btnHecho.id)
+      marcarComoHecho(this); // Pasar el botón como argumento a la función borrarPedido
+    });
+    //console.log(btnHecho.id);
+    pedidoElement.appendChild(btnHecho);
+  } else {
+    pedidoElement.classList.add('pedido-entregado');
+  }
 
   contenedor.appendChild(pedidoElement);
 }
 
-function borrarPedido(btn) {
+function marcarComoHecho(btn) {
 
   const idPedido = parseInt(btn.id);
   const pedidosRef = firebase.database().ref('Pedido');
-  let pedidoBorrar;
+  let pedidoSeleccionado;
   const ids = [];
 
   //obtener el pedido
@@ -426,31 +468,31 @@ function borrarPedido(btn) {
     snapshot.forEach(function (childSnapshot) {
       const pedido = childSnapshot.val();
       if (pedido.idPedido == idPedido) {
-        pedidoBorrar = pedido;
+        pedidoSeleccionado = pedido;
       }
     });
   }).then(function () {
-    if (pedidoBorrar) {
-      console.log('Pedido con ID:', pedidoBorrar);
+    if (pedidoSeleccionado) {
+      console.log('Pedido con ID:', pedidoSeleccionado);
 
 
       // Agregar IDs de productos
-      if (pedidoBorrar.productos) {
-        pedidoBorrar.productos.forEach(producto => {
+      if (pedidoSeleccionado.productos) {
+        pedidoSeleccionado.productos.forEach(producto => {
           ids.push(producto.idProducto);
         });
       }
 
       // Agregar IDs de menús
-      if (pedidoBorrar.menus) {
-        pedidoBorrar.menus.forEach(menu => {
+      if (pedidoSeleccionado.menus) {
+        pedidoSeleccionado.menus.forEach(menu => {
           ids.push(menu.idBebida, menu.idComplemento, menu.idEntrante);
         });
       }
 
       // Agregar IDs de ofertas y sus productos
-      if (pedidoBorrar.ofertas) {
-        pedidoBorrar.ofertas.forEach(oferta => {
+      if (pedidoSeleccionado.ofertas) {
+        pedidoSeleccionado.ofertas.forEach(oferta => {
           if (oferta.productosId) {
             ids.push(...oferta.productosId);
           }
@@ -484,32 +526,16 @@ function borrarPedido(btn) {
           if (stockInsuficiente) {
             return; // Salir de la función
           }
-
-          //a esta parte solo se pasa si los productos tienen stock
-
-
-          console.log('pasa');
-
-          /*ids.forEach(id => {
-            restarStockEnBD(id);
-          });
-
-          console.log('borrar el pedido de la bbdd');*/
-
-          /*Promise.all(ids.map(id => restarStockEnBD(id))).then(() => {
-            console.log('borrar el pedido de la bbdd');
-            // código para borrar el pedido de la bbdd
-
-          });*/
           Promise.all(ids.map(id => restarStockEnBD(id))).then(() => {
-            console.log('borrar el pedido de la bbdd');
-            pedidosRef.child(pedidoBorrar.idPedido.toString()).remove()
+            pedidosRef.child(pedidoSeleccionado.idPedido.toString()).update({
+              entregado: true
+            })
               .then(() => {
-                console.log('Pedido borrado con éxito');
-                mostrarPedidos('todos');
+                console.log('Pedido marcado como entregado con éxito');
+                mostrarPedidos('en curso');
               })
               .catch((error) => {
-                console.error('Error al borrar el pedido:', error);
+                console.error('Error al marcar el pedido como entregado:', error);
               });
           });
 
@@ -1094,7 +1120,7 @@ function guardarOfertaBBDD(oferta) {
     const ref = firebase.database().ref("Oferta");
     ref.child(oferta.idOferta).set(ofertaBBDD).then(() => {
       console.log("Oferta guardada correctamente");
-      
+
       var restoSeccion = document.getElementById('resto-seccion-ofertas');
 
       restoSeccion.innerHTML = '';
@@ -1214,7 +1240,30 @@ function obtenerNombreOferta(ofertaId) {
 function setUpBarraBusqueda(seccion) {
   switch (seccion) {
     case 'pedidos':
-    /**/
+      var caja = document.getElementById('txt-pedidos');
+      var lupa = document.getElementById('btn-lupa-pedidos');
+      var enCurso = document.getElementById('opc1-pedidos');
+      var terminados = document.getElementById('opc2-pedidos');
+      var todos = document.getElementById('opc3-pedidos');
+
+      lupa.onclick = function () {
+        mostrarPedidos('todos', caja.value);
+      };
+
+      enCurso.onclick = function () {
+        mostrarPedidos('en curso');
+      };
+
+      terminados.onclick = function () {
+        mostrarPedidos('terminados');
+      };
+
+      todos.onclick = function () {
+        mostrarPedidos('todos');
+      };
+
+      break;
+
     case 'productos':
       var caja = document.getElementById('txt-prod');
       var lupa = document.getElementById('btn-lupa-prod');

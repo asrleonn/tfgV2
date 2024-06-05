@@ -1,6 +1,6 @@
 .pedido {
-    background: #e1e8ec;
-    border: 1px solid #284a66;
+    /*background: #e1e8ec;
+    border: 1px solid #284a66;*/
     border-radius: 8px;
     box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
     padding: 15px;
@@ -67,12 +67,12 @@
     justify-content: center;
 }
 
-.pedido-entregado {
+.pedido-sin-entregar {
     background: #e1e8ec;
     border: 1px solid #284a66;
 }
 
-.pedido-sin-entregar {
+.pedido-entregado {
     background: #ece1e1;
     border: 1px solid #662835;
 }

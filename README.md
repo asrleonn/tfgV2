@@ -1,14 +1,7 @@
 # TGF 2DAM  
 ## Próximos cambios:  
-- Pedidos
-  - Crear pedidos
-  - Refrescarlos automáticamente
-- Edición de productos
-- boton borrar cuando el de añadir esté pulsado
+- refrescar pedidos (hacerlos no no?)
 - pantalla de edición
 - imagen
-- ofertas no activadas en rojo
-- lo del wass
- 
-## Revisar:  
-- Formulario crear ofertas
+- id cliente en pedidos, no borrarlos, filtros, puntos
+- documentacion
