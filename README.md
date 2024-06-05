@@ -12,6 +12,7 @@
 - pantalla de edición
 - si el stock es 1 pero se ha pedido 2 veces..
 - imagen
+- ofertas no activadas en rojo
  
 ## Revisar:  
 - Formulario crear ofertas

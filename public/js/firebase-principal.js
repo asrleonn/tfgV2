@@ -1152,7 +1152,7 @@ function setUpAnadirOferta() {
           }
         }
 
-        obtenerSiguienteIdOferta().then(function (idOferta) {
+        obtenerSiguienteIdOferta().then(async function (idOferta) {
           console.log("El próximo IdOferta es:", idOferta);
           oferta.idOferta = idOferta;
           //guardarEnBBDD(oferta);
@@ -1162,7 +1162,7 @@ function setUpAnadirOferta() {
             console.log("ID del producto:", idProducto);
           });
 
-          guardarOfertaBBDD(oferta);
+          await guardarOfertaBBDD(oferta);
         });
         /**/
 
@@ -1172,6 +1172,7 @@ function setUpAnadirOferta() {
 
         restoSeccion.innerHTML = '';
         mostrarBarraBusquedaOferta();
+        mostrarOfertas('todos'); /*seguir por aqui*/
       });
 
       restoSeccion.appendChild(form);
@@ -1197,30 +1198,33 @@ function obtenerSiguienteIdOferta() {
 
 
 function guardarOfertaBBDD(oferta) {
+  // Obtener el ID de los productos asociados a la oferta
+  const productosId = oferta.productos.map(producto => {
+    return buscarProductoPorDescripcion(producto).then(idProducto => {
+      return idProducto;
+    });
+  });
 
-  
+  // Esperar a que se resuelvan todas las promesas de obtener ID de productos
+  Promise.all(productosId).then(ids => {
+    // Crear un objeto oferta para guardar en la base de datos
+    const ofertaBBDD = {
+      IdOferta: oferta.idOferta,
+      Nombre: oferta.nombre,
+      Descuento: oferta.descuento,
+      ProductosId: ids,
+      RutaImagenOferta: oferta.imagen,
+      Activada: oferta.activada
+    };
 
-
-  /*const dbRef = firebase.database().ref('Oferta');
-
-  const nuevaClaveOferta = oferta.idOferta;
-
-  const activada = oferta.activada ? oferta.activada : false;
-
-  dbRef.child(nuevaClaveOferta).set({
-    Activada: activada,
-    Descuento: oferta.descuento,
-    IdOferta: nuevaClaveOferta,
-    Nombre: oferta.nombre,
-    ProductosId: oferta.productos,
-    RutaImagenOferta: oferta.imagen
-  }, function (error) {
-    if (error) {
-      console.error('Error al guardar la oferta en la base de datos:', error);
-    } else {
-      console.log('Oferta guardada exitosamente.');
-    }
-  });*/
+    // Guardar la oferta en la base de datos
+    const ref = firebase.database().ref("Oferta");
+    ref.child(oferta.idOferta).set(ofertaBBDD).then(() => {
+      console.log("Oferta guardada correctamente");
+    }).catch(error => {
+      console.error("Error al guardar la oferta:", error);
+    });
+  });
 }
 
 function buscarProductoPorDescripcion(descripcion) {
