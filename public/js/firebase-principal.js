@@ -90,6 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
         case 'inventario':
           console.log('inventario');
           setUpStockProductos();
+          setUpBorrarOferta();
           break;
       }
     });
@@ -528,19 +529,11 @@ function marcarComoHecho(btn) {
           }
           Promise.all(ids.map(id => restarStockEnBD(id))).then(() => {
             entregarProducto(pedidoSeleccionado.idPedido);
-            /*pedidosRef.child(pedidoSeleccionado).update({
-              entregado: true
-            })
-              .then(() => {
-                console.log('Pedido marcado como entregado con éxito');
-                mostrarPedidos('en curso');
-              })
-              .catch((error) => {
-                console.error('Error al marcar el pedido como entregado:', error);
-              });*/
+            sumarPuntos(pedidoSeleccionado.clienteId, pedidoSeleccionado.importe);
+
           });
 
-          
+
 
         })
 
@@ -551,6 +544,21 @@ function marcarComoHecho(btn) {
     console.error('Error al recuperar los pedidos:', error);
   });
 
+}
+
+function sumarPuntos(idCliente, importe) {
+  var puntos = Math.floor(importe) * 10;
+  const clientesRef = firebase.database().ref('Cliente');
+
+  clientesRef.once('value', function (snapshot) {
+    snapshot.forEach(function (childSnapshot) {
+      if (childSnapshot.val().idCliente === idCliente) {
+        var puntosActuales = childSnapshot.val().puntos;
+        var nuevosPuntos = puntosActuales + puntos;
+        clientesRef.child(childSnapshot.key).update({ puntos: nuevosPuntos });
+      }
+    });
+  });
 }
 
 function entregarProducto(idPedido) {
@@ -594,83 +602,142 @@ function restarStockEnBD(idProducto) {
 }
 
 function setUpStockProductos() {
-  var btnBuscar = document.getElementById('frmStock-boton-buscar');
-  var btnActualizar = document.getElementById('frmStock-boton-actualizar');
   const productosRef = firebase.database().ref('Producto');
-  let productoElegido;
-  var boolEncontrado = false;
+  const tipoComidaRef = firebase.database().ref('Tipo_comida');
+  const select2 = document.getElementById("editar-producto-select-2");
+  const select = document.getElementById("editar-producto-select");
+  const input1 = document.getElementById("editar-producto-input-1");
+  const input2 = document.getElementById("editar-producto-input-2");
+  const input3 = document.getElementById("editar-producto-input-3");
+  const input4 = document.getElementById("editar-producto-input-4");
+  const btnBorrar = document.getElementById('editar-producto-borrar');
+  const btnGuardar = document.getElementById('editar-producto-guardar');
+  var siSeHaSeleccionado = false;
 
-  btnActualizar.onclick = function () {
-    var inputActualizar = document.getElementById('frmStock-input-actualizar').value;
-    var idPedido = parseInt(document.getElementById('frmStock-id-pedido').value);
-    var nuevoStock = parseInt(inputActualizar);
+  btnGuardar.onclick = function () {
+    if (siSeHaSeleccionado) {
+      const selectedId = select.value;
+      const rutaImagen = input1.value.trim();
+      const ingredientes = input2.value.trim();
+      const precio = parseFloat(input3.value.trim());
+      const stock = parseInt(input4.value.trim());
+      const tipo = select2.value.trim();
 
-    if (isNaN(idPedido) || isNaN(nuevoStock)) {
-      console.log("Uno o ambos campos no contienen un número");
-    } else {
-      console.log("Ambos campos contienen un número"); // si los dos campos son un numero
-
-      // Buscar el producto con el idPedido
-      productosRef.once('value')
-        .then(function (snapshot) {
-          const productos = snapshot.val();
-          for (const producto of productos) {
-            if (producto.IdProducto == idPedido) {
-              // Actualizar el stock del producto
-              producto.Stock = nuevoStock;
-              productosRef.child(producto.IdProducto).update({ Stock: nuevoStock });
-              console.log('Stock actualizado correctamente');
-
-              // Vaciar los inputs
-              document.getElementById('frmStock-id-pedido').value = '';
-              document.getElementById('frmStock-input-actualizar').value = '';
-
-              break;
+      if (rutaImagen && ingredientes && !isNaN(precio) && !isNaN(stock) && tipo) {
+        productosRef.once("value", (snapshot) => {
+          snapshot.forEach((producto) => {
+            if (producto.val().IdProducto === parseInt(selectedId)) {
+              producto.ref.update({
+                RutaImagen: rutaImagen,
+                Ingredientes: ingredientes,
+                Precio: precio,
+                Stock: stock,
+                Tipo: tipo
+              });
+              input1.value = "";
+              input2.value = "";
+              input3.value = "";
+              input4.value = "";
+              siSeHaSeleccionado = false;
             }
-          }
-        })
-        .catch(function (error) {
-          console.error('Error al actualizar el stock del producto con ID:', idPedido, error);
+          });
         });
+      } else {
+        alert("Por favor, complete todos los campos correctamente.");
+      }
     }
-  };
+  }
 
-  btnBuscar.onclick = function () {
-    var inputBuscar = document.getElementById('frmStock-id-pedido').value;
-    console.log('contenido de busqueda: ' + inputBuscar);
-
-    if (isNaN(inputBuscar)) {
-      alert("El campo de búsqueda debe ser un número");
-      return;
-    }
-
-    //buscar producto en la bbdd
-    return productosRef.once('value')
-      .then(function (snapshot) {
-        const productos = snapshot.val();
-        for (const producto of productos) {
-          if (producto.IdProducto == parseInt(inputBuscar)) {
-            productoElegido = producto;
-            boolEncontrado = true;
-            console.log('el prod es: ' + producto.Descripcion);
+  btnBorrar.onclick = function () {
+    if (siSeHaSeleccionado) {
+      const selectedId = select.value;
+      productosRef.once("value", (snapshot) => {
+        snapshot.forEach((producto) => {
+          if (producto.val().IdProducto === parseInt(selectedId)) {
+            producto.ref.remove(); // Eliminar el producto de la base de datos
           }
-        }
-        return null;
-      })
-      .then(function () {
-        console.log('hecho');
-        if (boolEncontrado) { //si se encuentra el producto
-          console.log('encontrado');
-          document.getElementById('frmStock-input-actualizar').value = productoElegido.Stock;
-
-        } else {
-          console.log('no encontrado');
-        }
-      })
-      .catch(function (error) {
-        console.error('Error al restar el stock del producto con ID:', parseInt(inputBuscar), error);
+        });
       });
+      input1.value = "";
+      input2.value = "";
+      input3.value = "";
+      input4.value = "";
+      siSeHaSeleccionado = false;
+    }
   };
+
+  productosRef.on('value', (snapshot) => {
+    select.innerHTML = ''; // Limpiar el select antes de agregar los nuevos productos
+    snapshot.forEach((producto) => {
+      const option = document.createElement("option");
+      option.value = producto.val().IdProducto;
+      option.text = producto.val().Descripcion;
+      select.appendChild(option);
+    });
+  });
+
+  select.addEventListener("change", (e) => {
+    siSeHaSeleccionado = true;
+    const selectedId = e.target.value;
+    productosRef.once("value", (snapshot) => {
+      snapshot.forEach((producto) => {
+        if (producto.val().IdProducto === parseInt(selectedId)) {
+          input1.value = producto.val().RutaImagen;
+          input2.value = producto.val().Ingredientes;
+          input3.value = producto.val().Precio;
+          input4.value = producto.val().Stock;
+          select2.value = producto.val().Tipo;
+        }
+      });
+    });
+  });
+
+  tipoComidaRef.once("value", (snapshot) => {
+    select2.innerHTML = '';
+    snapshot.forEach((tipo) => {
+      const option = document.createElement("option");
+      option.value = tipo.val();
+      option.text = tipo.val();
+      select2.appendChild(option);
+    });
+  });
+
+}
+
+function setUpBorrarOferta() {
+  const ofertasRef = firebase.database().ref('Oferta');
+  const select = document.getElementById('borrar-ofertas-select');
+  const btnBorrar = document.getElementById('borrar-oferta-boton');
+
+  btnBorrar.onclick = function() {
+    const ofertaSeleccionada = select.value;
+    ofertasRef.once('value', (snapshot) => {
+      snapshot.forEach((oferta) => {
+        if (oferta.val().Nombre === ofertaSeleccionada) {
+          oferta.ref.remove();
+        }
+      });
+      select.innerHTML = ''; // Limpiar el select antes de agregar las nuevas ofertas
+      ofertasRef.on('value', (snapshot) => {
+        snapshot.forEach((oferta) => {
+          const option = document.createElement("option");
+          option.value = oferta.val().Nombre;
+          option.text = oferta.val().Nombre;
+          select.appendChild(option);
+        });
+      });
+    });
+  };
+
+  ofertasRef.on('value', (snapshot) => {
+    select.innerHTML = ''; // Limpiar el select antes de agregar las nuevas ofertas
+    snapshot.forEach((oferta) => {
+      const option = document.createElement("option");
+      option.value = oferta.val().Nombre;
+      option.text = oferta.val().Nombre;
+      select.appendChild(option);
+    });
+  });
 }
 
 function verificarStock(idProducto) {

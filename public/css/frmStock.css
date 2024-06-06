@@ -1,30 +1,28 @@
-.frmStock-container {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-}
-
-.frmStock-label {
-    margin-right: 10px;
-}
-
-.frmStock-input {
-    margin-right: 10px;
+.editar-producto-input {
+    width: 100%;
     padding: 10px;
+    margin-bottom: 20px;
     border: 1px solid #ccc;
 }
 
-.frmStock-boton {
-    margin-right: 10px;
+.editar-producto-boton {
+    color: #fff;
     padding: 10px 20px;
     border: none;
     border-radius: 5px;
-    background-color: #284a66;
-    color: #fff;
     cursor: pointer;
+    margin-bottom: 20px;
 }
 
-.frmStock-boton:hover {
+#editar-producto-borrar,
+#borrar-oferta-boton {
+    background-color: #662835;
+}
+
+#editar-producto-guardar {
     background-color: #284a66;
-    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-  }
+}
+
+#borrar-ofertas-form {
+    margin-top: 15px;
+}

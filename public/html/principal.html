@@ -198,12 +198,29 @@
       <!--inventario-->
       <div id="inventario" class="content-section" data-name="inventario" style="display: none;">
         <div class="resto-seccion" id="lista-clientes">
-          <form>
-            <label for="frmStock-id-pedido">Stock de los productos</label>
-            <input type="text" id="frmStock-id-pedido" class="frmStock-input" placeholder="Id del producto"/>
-            <button type="button" id="frmStock-boton-buscar" class="frmStock-boton">Buscar</button>
-            <input type="text" id="frmStock-input-actualizar" class="frmStock-input" placeholder="Stock del producto"/>
-            <button type="button" id="frmStock-boton-actualizar" class="frmStock-boton">Actualizar</button>
+
+          <form id="editar-producto-form">
+            <select id="editar-producto-select" class="editar-producto-input">
+              <option value="">Seleccione una producto</option>
+              <!-- opciones del select -->
+            </select>
+            <input type="text" id="editar-producto-input-1" class="editar-producto-input" placeholder="Ruta imagen">
+            <input type="text" id="editar-producto-input-2" class="editar-producto-input" placeholder="Ingredientes">
+            <input type="text" id="editar-producto-input-3" class="editar-producto-input" placeholder="Precio">
+            <input type="number" id="editar-producto-input-4" class="editar-producto-input" placeholder="Stock">
+            <select id="editar-producto-select-2" class="editar-producto-input">
+              <option value="">Seleccione un tipo</option>
+              <!-- opciones del select -->
+            </select>
+            <button id="editar-producto-guardar" class="editar-producto-boton">Guardar producto</button>
+            <button id="editar-producto-borrar" class="editar-producto-boton">Borrar producto</button>
+          </form>
+
+          <form id="borrar-ofertas-form">
+            <select id="borrar-ofertas-select" class="editar-producto-input">
+              <option value="">Seleccione una oferta</option>
+            </select>
+            <button id="borrar-oferta-boton" class="editar-producto-boton">Borrar oferta</button>
           </form>
         </div>
       </div>
