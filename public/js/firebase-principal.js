@@ -422,14 +422,6 @@ async function mostrarPedidoEnHTML(pedido, contenedor) {
   pedidoElement.appendChild(h3);
   pedidoElement.appendChild(clienteParrafo);
 
-  /*
-  if (pedido.productosId.length > 0) {
-    const productosParrafo = document.createElement('p');
-    const productosDescripciones = pedido.productos;
-    productosParrafo.innerHTML = `<b>Productos:</b> ${productosDescripciones.join(', ')}`;
-    pedidoElement.appendChild(productosParrafo);
-  }*/
-
   if (pedido.productosId.length > 0) {
     const productosParrafo = document.createElement('p');
     const productosIds = pedido.productosId;
