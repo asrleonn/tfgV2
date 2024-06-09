@@ -269,7 +269,6 @@ function mostrarOfertas(nombreFiltro, consultaBusqueda = '') {
     });
 }
 
-
 function mostrarPedidos(nombreFiltro, consultaBusqueda = '') {
   const pedidosRef = firebase.database().ref('Pedido');
 
@@ -280,7 +279,6 @@ function mostrarPedidos(nombreFiltro, consultaBusqueda = '') {
       contenedorPedidos.innerHTML = '';
 
       if (pedidos) {
-        // Convertir los pedidos a un array para ordenarlos por fecha y hora
         const pedidosArray = Object.keys(pedidos).map(key => {
           const pedido = pedidos[key];
           const fechaHora = pedido.fechaHora ? new Date(
@@ -299,12 +297,16 @@ function mostrarPedidos(nombreFiltro, consultaBusqueda = '') {
             entregado: pedido.entregado || false,
             fechaHora: fechaHora,
             importe: pedido.importe || 0,
-            Productos: Array.isArray(pedido.productos) ? pedido.productos.map(producto => producto.idProducto) : [],
-            Ofertas: Array.isArray(pedido.ofertas) ? pedido.ofertas.map(oferta => oferta.idOferta) : [],
+            //productosId: Array.isArray(pedido.productosId) ? pedido.productosId.map(producto => producto.idProducto) : [],
+            productosId: Array.isArray(pedido.productosId) ? pedido.productosId : [],
+            ofertasId: Array.isArray(pedido.ofertasId) ? pedido.ofertasId : [],
             menus: Array.isArray(pedido.menus) ? pedido.menus : []
           };
         });
 
+        pedidosArray.forEach(pedido => {
+          //console.log(pedido);
+        });
         // Ordenar los pedidos por fecha y hora de manera ascendente
         pedidosArray.sort((a, b) => a.fechaHora.getTime() - b.fechaHora.getTime());
 
@@ -339,7 +341,7 @@ function mostrarPedidos(nombreFiltro, consultaBusqueda = '') {
             .then(nombreCliente => {
               pedido.nombreCliente = nombreCliente;
 
-              const promisesProductos = pedido.Productos.map(productoId => {
+              const promisesProductos = pedido.productosId.map(productoId => {
                 return obtenerDescripcionProducto(productoId)
                   .then(descripcion => descripcion)
                   .catch(error => {
@@ -347,7 +349,12 @@ function mostrarPedidos(nombreFiltro, consultaBusqueda = '') {
                   });
               });
 
-              const promisesOfertas = pedido.Ofertas.map(ofertaId => {
+              Promise.all(promisesProductos)
+                .then(productos => {
+                  pedido.productos = productos;
+                });
+
+              const promisesOfertas = pedido.ofertasId.map(ofertaId => {
                 return obtenerNombreOferta(ofertaId)
                   .then(nombre => nombre)
                   .catch(error => {
@@ -355,17 +362,16 @@ function mostrarPedidos(nombreFiltro, consultaBusqueda = '') {
                   });
               });
 
-              Promise.all([...promisesProductos, ...promisesOfertas])
-                .then(descripciones => {
-                  pedido.Productos = descripciones.slice(0, pedido.Productos.length);
-                  pedido.Ofertas = descripciones.slice(pedido.Productos.length);
-                  console.log('id del cliente' + pedido.clienteId);
-
-                  /*CUIDAO*/
-                  if (anadirProd) {
-                    mostrarPedidoEnHTML(pedido, contenedorPedidos);
-                  }
+              Promise.all(promisesOfertas)
+                .then(ofertas => {
+                  pedido.ofertas = ofertas;
                 });
+
+              if (anadirProd) {
+                //console.log('los pedidos del producto son: ' + pedido.productosId);
+                console.log(pedido);
+                mostrarPedidoEnHTML(pedido, contenedorPedidos);
+              }
             })
             .catch(error => {
               console.error('Error al obtener el nombre del cliente:', error);
@@ -383,14 +389,16 @@ function mostrarPedidos(nombreFiltro, consultaBusqueda = '') {
     .catch((error) => {
       console.error('Error al leer los pedidos:', error);
     });
+
 }
+
 
 async function mostrarPedidoEnHTML(pedido, contenedor) {
   // Crear elementos HTML
   const pedidoElement = document.createElement('div');
   const h3 = document.createElement('h3');
   const clienteParrafo = document.createElement('p');
-  const entregadoParrafo = document.createElement('p');
+  //const entregadoParrafo = document.createElement('p');
   const fechaHoraParrafo = document.createElement('p');
   const importeParrafo = document.createElement('p');
 
@@ -406,7 +414,7 @@ async function mostrarPedidoEnHTML(pedido, contenedor) {
 
 
   console.log(nombreCliente);
-  entregadoParrafo.innerHTML = `<b>Entregado:</b> ${pedido.entregado ? 'Sí' : 'No'}`;
+  //entregadoParrafo.innerHTML = `<b>Entregado:</b> ${pedido.entregado ? 'Sí' : 'No'}`;
   fechaHoraParrafo.innerHTML = `<b>Fecha y Hora:</b> ${pedido.fechaHora.toLocaleString()}`;
   importeParrafo.innerHTML = `<b>Importe:</b> ${pedido.importe.toFixed(2)}`;
 
@@ -414,27 +422,46 @@ async function mostrarPedidoEnHTML(pedido, contenedor) {
   pedidoElement.appendChild(h3);
   pedidoElement.appendChild(clienteParrafo);
 
-
-  // Condicionalmente agregar párrafos para productos, ofertas y menús
-  if (pedido.Productos.length > 0) {
+  /*
+  if (pedido.productosId.length > 0) {
     const productosParrafo = document.createElement('p');
-    productosParrafo.innerHTML = `<b>Productos:</b> ${pedido.Productos.join(', ')}`;
+    const productosDescripciones = pedido.productos;
+    productosParrafo.innerHTML = `<b>Productos:</b> ${productosDescripciones.join(', ')}`;
+    pedidoElement.appendChild(productosParrafo);
+  }*/
+
+  if (pedido.productosId.length > 0) {
+    const productosParrafo = document.createElement('p');
+    const productosIds = pedido.productosId;
+    const productosDescripcionesPromesas = productosIds.map(id => obtenerDescripcionProducto(id));
+    const productosDescripciones = await Promise.all(productosDescripcionesPromesas);
+    const productosDescripcionesTexto = productosDescripciones.map(descripcion => descripcion);
+    productosParrafo.innerHTML = `<b>Productos:</b> ${productosDescripcionesTexto.join(', ')}`;
     pedidoElement.appendChild(productosParrafo);
   }
 
-  if (pedido.Ofertas.length > 0) {
+  if (pedido.ofertas.length > 0) {
     const ofertasParrafo = document.createElement('p');
-    ofertasParrafo.innerHTML = `<b>Ofertas:</b> ${pedido.Ofertas.join(', ')}`;
+    const ofertasNombre = pedido.ofertas;
+    ofertasParrafo.innerHTML = `<b>Ofertas:</b> ${ofertasNombre.join(', ')}`;
     pedidoElement.appendChild(ofertasParrafo);
   }
 
+
   if (pedido.menus.length > 0) {
     const menuParrafo = document.createElement('p');
-    menuParrafo.innerHTML = `<b>Id Menu(s):</b> ${pedido.menus.map(menu => menu.idMenu).join(', ')}`;
+    const menusHtml = pedido.menus.map(async menu => {
+      const bebida = await obtenerDescripcionProducto(menu.idBebida);
+      const entrante = await obtenerDescripcionProducto(menu.idEntrante);
+      const complemento = await obtenerDescripcionProducto(menu.idComplemento);
+      return `<b>Menú: </b>${bebida}, ${entrante}, ${complemento}`;
+    });
+    const menusHtmlResolved = await Promise.all(menusHtml);
+    menuParrafo.innerHTML = menusHtmlResolved.join('<br>');
     pedidoElement.appendChild(menuParrafo);
   }
 
-  pedidoElement.appendChild(entregadoParrafo);
+  //pedidoElement.appendChild(entregadoParrafo);
   pedidoElement.appendChild(fechaHoraParrafo);
   pedidoElement.appendChild(importeParrafo);
 
@@ -456,6 +483,7 @@ async function mostrarPedidoEnHTML(pedido, contenedor) {
 
   contenedor.appendChild(pedidoElement);
 }
+
 
 function marcarComoHecho(btn) {
 
@@ -709,7 +737,7 @@ function setUpBorrarOferta() {
   const select = document.getElementById('borrar-ofertas-select');
   const btnBorrar = document.getElementById('borrar-oferta-boton');
 
-  btnBorrar.onclick = function() {
+  btnBorrar.onclick = function () {
     const ofertaSeleccionada = select.value;
     ofertasRef.once('value', (snapshot) => {
       snapshot.forEach((oferta) => {
