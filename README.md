@@ -1,3 +1,4 @@
 # TGF 2DAM  
 ## Próximos cambios:  
-- disponible o no la oferta
+- alerts confirmacion
+- alerts indicando los cambios hechos

@@ -19,7 +19,8 @@
     background-color: #662835;
 }
 
-#editar-producto-guardar {
+#editar-producto-guardar,
+#guardar-oferta-boton {
     background-color: #284a66;
 }
 

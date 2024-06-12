@@ -737,11 +737,15 @@ function setUpStockProductos() {
 
 }
 
+/*
 function setUpBorrarOferta() {
   const ofertasRef = firebase.database().ref('Oferta');
   const select = document.getElementById('borrar-ofertas-select');
+  const selectEstado = document.getElementById('estado-ofertas-select');
   const btnBorrar = document.getElementById('borrar-oferta-boton');
+  const btnGuardar = document.getElementById('guardar-oferta-boton');
   btnBorrar.type = 'button';
+  btnGuardar.type = 'button';
 
   btnBorrar.onclick = function () {
     const ofertaSeleccionada = select.value;
@@ -772,6 +776,81 @@ function setUpBorrarOferta() {
       select.appendChild(option);
     });
   });
+}*/
+
+function setUpBorrarOferta() {
+  const ofertasRef = firebase.database().ref('Oferta');
+  const select = document.getElementById('borrar-ofertas-select');
+  const selectEstado = document.getElementById('estado-ofertas-select');
+  const btnBorrar = document.getElementById('borrar-oferta-boton');
+  const btnGuardar = document.getElementById('guardar-oferta-boton');
+  btnBorrar.type = 'button';
+  btnGuardar.type = 'button';
+
+  // Agregar opciones a selectEstado
+  const optionActivada = document.createElement("option");
+  optionActivada.value = 'true';
+  optionActivada.text = 'Activada';
+  selectEstado.appendChild(optionActivada);
+
+  const optionDesactivada = document.createElement("option");
+  optionDesactivada.value = 'false';
+  optionDesactivada.text = 'Desactivada';
+  selectEstado.appendChild(optionDesactivada);
+
+  btnBorrar.onclick = function () {
+    const ofertaSeleccionada = select.value;
+    ofertasRef.once('value', (snapshot) => {
+      snapshot.forEach((oferta) => {
+        if (oferta.val().Nombre === ofertaSeleccionada) {
+          oferta.ref.remove();
+        }
+      });
+      select.innerHTML = ''; // Limpiar el select antes de agregar las nuevas ofertas
+      ofertasRef.on('value', (snapshot) => {
+        snapshot.forEach((oferta) => {
+          const option = document.createElement("option");
+          option.value = oferta.val().Nombre;
+          option.text = oferta.val().Nombre;
+          select.appendChild(option);
+        });
+      });
+    });
+  };
+
+  ofertasRef.on('value', (snapshot) => {
+    select.innerHTML = ''; // Limpiar el select antes de agregar las nuevas ofertas
+    snapshot.forEach((oferta) => {
+      const option = document.createElement("option");
+      option.value = oferta.val().Nombre;
+      option.text = oferta.val().Nombre;
+      select.appendChild(option);
+    });
+  });
+
+  // Actualizar selectEstado cuando se selecciona una oferta
+  select.onchange = function () {
+    const ofertaSeleccionada = select.value;
+    ofertasRef.once('value', (snapshot) => {
+      snapshot.forEach((oferta) => {
+        if (oferta.val().Nombre === ofertaSeleccionada) {
+          selectEstado.value = oferta.val().Activada.toString();
+        }
+      });
+    });
+  };
+
+  // Actualizar oferta en BBDD cuando se cambia el estado
+  selectEstado.onchange = function () {
+    const ofertaSeleccionada = select.value;
+    ofertasRef.once('value', (snapshot) => {
+      snapshot.forEach((oferta) => {
+        if (oferta.val().Nombre === ofertaSeleccionada) {
+          oferta.ref.update({ Activada: selectEstado.value === 'true' });
+        }
+      });
+    });
+  };
 }
 
 function verificarStock(idProducto) {
