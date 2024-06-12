@@ -51,6 +51,10 @@ document.addEventListener('DOMContentLoaded', () => {
   let sidebar = document.querySelector(".sidebar");
   let closeBtn = document.querySelector("#btn");
 
+  let interval = setInterval(() => {
+    mostrarPedidos('en curso');
+  }, 30000);
+
   sidebarItems.forEach(item => {
     item.addEventListener('click', () => {
       const contentToShow = item.getAttribute('data-content');
@@ -70,27 +74,34 @@ document.addEventListener('DOMContentLoaded', () => {
         case 'pedidos':
           setUpBarraBusqueda('pedidos');
           mostrarPedidos('en curso');
+          interval = setInterval(() => {
+            mostrarPedidos('en curso');
+          }, 30000);
           break;
         case 'productos':
           mostrarBarraBusquedaProd();
           mostrarProductos('todos');
           setUpBarraBusqueda('productos');
           setUpAnadirProd();
+          clearInterval(interval);
           break;
         case 'ofertas':
           mostrarBarraBusquedaOferta(); //-> llama a mostrarOfertas('todos')
           //mostrarOfertas('todos');
           setUpBarraBusqueda('ofertas');
           setUpAnadirOferta();
+          clearInterval(interval);
           break;
         case 'clientes':
           mostrarClientes('todos');
           setUpBarraBusqueda('clientes');
+          clearInterval(interval);
           break;
         case 'inventario':
           console.log('inventario');
           setUpStockProductos();
           setUpBorrarOferta();
+          clearInterval(interval);
           break;
       }
     });
@@ -632,6 +643,8 @@ function setUpStockProductos() {
   const input4 = document.getElementById("editar-producto-input-4");
   const btnBorrar = document.getElementById('editar-producto-borrar');
   const btnGuardar = document.getElementById('editar-producto-guardar');
+  btnBorrar.type = 'button';
+  btnGuardar.type = 'button';
   var siSeHaSeleccionado = false;
 
   btnGuardar.onclick = function () {
@@ -728,6 +741,7 @@ function setUpBorrarOferta() {
   const ofertasRef = firebase.database().ref('Oferta');
   const select = document.getElementById('borrar-ofertas-select');
   const btnBorrar = document.getElementById('borrar-oferta-boton');
+  btnBorrar.type = 'button';
 
   btnBorrar.onclick = function () {
     const ofertaSeleccionada = select.value;
@@ -963,17 +977,23 @@ function setUpAnadirProd() {
               stock: parseInt(form.stock.value),
               tipo: form.tipo.value
             };
-            guardarProductoBBDD(producto);
 
-            restoSeccion.innerHTML = '';
+            if (comprobarCamposProducto()) {
+              guardarProductoBBDD(producto);
+              restoSeccion.innerHTML = '';
 
-            barraBusqueda.style.display = '';
-            menuDesplegable.style.display = '';
-            boton.style.display = '';
+              barraBusqueda.style.display = '';
+              menuDesplegable.style.display = '';
+              boton.style.display = '';
 
-            mostrarBarraBusquedaProd();
+              mostrarBarraBusquedaProd();
 
-            mostrarProductos('todos');
+              mostrarProductos('todos');
+            } else {
+              alert('Tipo de datos incorrecto');
+            }
+
+
           } else {
             console.error('No se pudo obtener un nuevo ID para el producto');
           }
@@ -984,6 +1004,26 @@ function setUpAnadirProd() {
     });
 
   };
+}
+
+function comprobarCamposProducto() {
+  var form = document.getElementById('modal-form');
+  var descripcion = form.descripcion.value.trim();
+  var ingredientes = form.ingredientes.value.trim();
+  var precio = form.precio.value.trim();
+  var urlimagen = form.urlimagen.value.trim();
+  var stock = form.stock.value.trim();
+  var tipo = form.tipo.value.trim();
+
+  if (descripcion === '' || ingredientes === '' || precio === '' || urlimagen === '' || stock === '' || tipo === '') {
+    return false; // Algun campo está vacío
+  }
+
+  if (isNaN(parseFloat(precio)) || isNaN(parseInt(stock))) {
+    return false; // Precio o stock no son números
+  }
+
+  return true; // Todos los campos están correctos
 }
 
 function obtenerTiposComida() {
@@ -1174,13 +1214,56 @@ function setUpAnadirOferta() {
             console.log("ID del producto:", idProducto);
           });
 
-          guardarOfertaBBDD(oferta);
+          if (camposOfertaCorrectos()) {
+            guardarOfertaBBDD(oferta);
+          } else {
+            alert('Tipo de datos incorrecto');
+          }
         });
       });
 
       restoSeccion.appendChild(form);
     });
   };
+}
+
+function camposOfertaCorrectos() {
+  var oferta = {};
+
+  // Verificar nombre
+  oferta.nombre = document.querySelector('input[name="nombre"]').value.trim();
+  if (oferta.nombre === '') {
+    return false; // Nombre vacío
+  }
+
+  // Verificar descuento
+  oferta.descuento = parseFloat(document.querySelector('input[name="descuento"]').value.trim());
+  if (isNaN(oferta.descuento) || oferta.descuento < 0 || oferta.descuento > 1) {
+    return false; // Descuento no es un número entre 0 y 1
+  }
+
+  // Verificar productos
+  var productosSelect = document.querySelector('select[name="productos"]');
+  oferta.productos = Array.from(productosSelect.selectedOptions).map(function (option) {
+    return option.value;
+  });
+  if (oferta.productos.length === 0) {
+    return false; // No se ha seleccionado ningún producto
+  }
+
+  // Verificar imagen
+  oferta.imagen = document.querySelector('input[name="imagen"]').value.trim();
+  if (oferta.imagen === '') {
+    return false; // Imagen vacía
+  }
+
+  // Verificar estado de la oferta
+  oferta.activada = document.querySelector('select[name="activada"]').value === 'true';
+  if (oferta.activada === null || oferta.activada === undefined) {
+    return false; // Estado de la oferta no seleccionado
+  }
+
+  return true; // Todos los campos están correctos
 }
 
 function obtenerSiguienteIdOferta() {

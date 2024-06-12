@@ -1,9 +1,3 @@
 # TGF 2DAM  
 ## Próximos cambios:  
-- pantalla de edición
-- documentacion
-- excepcion 'no ponia un numero'
 - disponible o no la oferta
-- refrescar al tiempo
-
-- avisos al poner datos mal en los formularios
